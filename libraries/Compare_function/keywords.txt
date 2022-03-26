@@ -1,0 +1,17 @@
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+abs_temp	KEYWORD2
+max_ele_abs	KEYWORD2
+max_ele_abs	KEYWORD2
+max_ele	KEYWORD2
+min_ele	KEYWORD2
+max_index_abs	KEYWORD2
+min_index_abs	KEYWORD2
+max_index	KEYWORD2
+min_index	KEYWORD2

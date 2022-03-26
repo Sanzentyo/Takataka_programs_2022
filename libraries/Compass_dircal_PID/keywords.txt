@@ -1,0 +1,22 @@
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+Cal_dir	KEYWORD1
+Adafruit_BNO055	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+set_front_dir	KEYWORD2
+set_PID_par	KEYWORD2
+Cal_Mom_set	KEYWORD2
+Cal_Mom_P	KEYWORD2
+Cal_Mom_P_target	KEYWORD2
+Cal_Mom_PD_target	KEYWORD2
+Cal_Mom_PID	KEYWORD2
+Cal_Mom_PID_target	KEYWORD2
+reset_PID	KEYWORD2
+
+setup_compass	KEYWORD2

@@ -1,0 +1,30 @@
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+IR_sensor	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+print_data	KEYWORD2
+print_csv_first	KEYWORD2
+print_csv	KEYWORD2
+
+set_cor	KEYWORD2
+set_radius	KEYWORD2
+
+read_IR	KEYWORD2
+cal_XY	KEYWORD2
+cal_RT	KEYWORD2
+
+read_IR_cor	KEYWORD2
+cal_XY_cor	KEYWORD2
+cal_RT_cor	KEYWORD2
+
+cal_close	KEYWORD2
+
+sensorInfo_t	LITERAL1
+vectorXY_t	LITERAL1
+vectorRT_t	LITERAL1

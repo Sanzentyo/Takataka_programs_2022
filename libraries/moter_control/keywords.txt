@@ -1,0 +1,14 @@
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+moter_control	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+moter_move	KEYWORD2
+moter_stop	KEYWORD2
+moter_move_Serial	KEYWORD2
+moter_stop_Serial	KEYWORD2

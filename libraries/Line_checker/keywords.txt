@@ -1,0 +1,11 @@
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+line_check	KEYWORD2
+line_check_Serial	KEYWORD2
+line_int	KEYWORD2
+line_pow_t	LITERAL1
+line_flag_t	LITERAL1

@@ -1,0 +1,12 @@
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+MovingAverage	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+updateData	KEYWORD2
+reset	KEYWORD2
