@@ -31,7 +31,7 @@ uint8_t IR_PIN[8] = {A1,A2,A3,A4,A5,A6,A7,A8};//ピンの番号
 float IR_IN[8] = {5*PI/4, 3*PI/2, 7*PI/4, 0, PI/4, PI/2, 3*PI/4, PI};//ピンの角度
 float IR_cor[8] = {1.07,1.11,1.03,1.00,1.14,1.00,1.14,1.10};
 float theta_M[3] = {0.0,4*PI/3,2*PI/3};//モーターの角度
-int power = 50;
+int power = 100;
 
 //インスタンスの生成
 IR_sensor IR_sen(IR_PIN,IR_IN);
