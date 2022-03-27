@@ -23,6 +23,7 @@
 #define I2C_Clock 8000000
 #define BOAL_RADIUS 3.6
 #define UNIT_RADIUS 8.5
+#define IR_UNIT_RADIUS 400
 #define MAX_R 1400
 
 //ハードウェア依存
@@ -41,9 +42,8 @@ Cal_dir Cal_dir(0);
 Ultrasonic Ultrasonic_back(25,ECHO_PIN,TRIG_PIN);
 
 //グローバル変数
-imu::Vector<3> euler;//絶対角度が入る
 vectorRT_t Boal_RT;
-float now_radius,now_theta,round_theta,G_dir = PI/2;
+float now_radius,now_theta,round_theta,G_dir = PI/2,unit_dir;
 int Mom_now;
 
 void setup() {
@@ -56,7 +56,7 @@ void setup() {
   //pinMode(START_PIN,INPUT);
   //button_stay();
   setup_compass(&Compass_ctrl,&Cal_dir);
-  Cal_dir.set_PID_par(0.7,0.2,0.1,0.004);
+  Cal_dir.set_PID_par(0.64,0.2,0.1,0.004);
 }
 
 void loop() {
@@ -64,25 +64,27 @@ void loop() {
   bool flag = true;//line_check(&Mctrl,power);
   
   if(flag){
-    euler = Compass_ctrl.getVector(Adafruit_BNO055::VECTOR_EULER);//現在の絶対角度を取得
-    Mom_now = Cal_dir.Cal_Mom_PID(euler.x()/180*PI);
+    unit_dir = Compass_ctrl.getVector(Adafruit_BNO055::VECTOR_EULER).x()/180*PI;//現在の絶対角度を取得
+    Mom_now = Cal_dir.Cal_Mom_P(unit_dir);
     Boal_RT = IR_sen.cal_RT();
     now_radius = ma_radius.updateData(Boal_RT.radius);
     Serial.println(now_radius);
     if(now_radius < 100)Mctrl.moter_move(0,0,Mom_now);
     else if(now_radius < 500)Mctrl.moter_move(Boal_RT.theta,power,Mom_now);
-    else{
-      if(Boal_RT.theta < -2*PI/3){
+    else if(now_radius < MAX_R*0.9){
+      float now_x = now_radius*cos(Boal_RT.theta);
+      
+      if((Boal_RT.theta < -2*PI/3) | (-IR_UNIT_RADIUS < now_x && Boal_RT.theta < 0)){
         round_theta = IR_sen.cal_close(Boal_RT.theta,now_radius);
         Mctrl.moter_move(round_theta,power,Mom_now);
-      }else if(Boal_RT.theta < -PI/2){
+      }else if((Boal_RT.theta < -PI/2) && (now_x < IR_UNIT_RADIUS)){
         Mctrl.moter_move(0,power,Mom_now);
-      }else if(Boal_RT.theta < -PI/3){
+      }else if(Boal_RT.theta < -PI/3 ){
         Mctrl.moter_move(PI,power,Mom_now);
-      }else if(Boal_RT.theta < G_dir-PI/6){
+      }else if((Boal_RT.theta < PI/6) | (now_x < IR_UNIT_RADIUS)){
         round_theta = IR_sen.cal_close(Boal_RT.theta,now_radius);
         Mctrl.moter_move(round_theta,power,Mom_now);
-      }else if(Boal_RT.theta < G_dir+PI/6){
+      }else if((Boal_RT.theta < PI/6) && (-IR_UNIT_RADIUS < now_x)){
         Mctrl.moter_move(G_dir,power,Mom_now);
       }else{
         round_theta = IR_sen.cal_close(Boal_RT.theta,now_radius);
@@ -92,7 +94,7 @@ void loop() {
     /*else if(now_radius < MAX_R*0.9){
       round_theta = IR_sen.cal_close(Boal_RT.theta,now_radius);
       Mctrl.moter_move(round_theta,power,Mom_now);
-    }else{//Mctrl.moter_move(round_theta,0,Mom_now);
+    }*/else{//Mctrl.moter_move(round_theta,0,Mom_now);
       if(-PI <= Boal_RT.theta && Boal_RT.theta <= -7*PI/12)Mctrl.moter_move(-PI/2,power,Mom_now);
       else if(-7*PI/12 < Boal_RT.theta && Boal_RT.theta <= -PI/2)Mctrl.moter_move(0,power,Mom_now);
       else if(-PI/2 < Boal_RT.theta && Boal_RT.theta <= -5*PI/12)Mctrl.moter_move(PI,power,Mom_now);
@@ -100,7 +102,7 @@ void loop() {
       else if(0 < Boal_RT.theta && Boal_RT.theta <= PI/6)Mctrl.moter_move(Boal_RT.theta-PI/6,power,Mom_now);
       else if(PI/6 < Boal_RT.theta && Boal_RT.theta <= 5*PI/6)Mctrl.moter_move(Boal_RT.theta,power,Mom_now); 
       else if(5*PI/6 < Boal_RT.theta && Boal_RT.theta <= PI)Mctrl.moter_move(Boal_RT.theta+PI/6,power,Mom_now);
-    }*/
+    }
   }
 }
 
