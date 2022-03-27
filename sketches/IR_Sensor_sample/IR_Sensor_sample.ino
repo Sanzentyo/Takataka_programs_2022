@@ -16,7 +16,7 @@ void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
   IR_sen.set_cor(IR_cor);
-  IR_sen.set_radius(9,3.6,1100);
+  IR_sen.set_radius(10,3.6,1100);
 }
 
 float now_radius;
@@ -26,10 +26,10 @@ void loop() {
   float a = micros();
   now_RT = IR_sen.cal_RT();
   //IR_sen.print_data();
-  //now_radius = ma_radius.updateData(now_RT.radius);
+  now_radius = ma_radius.updateData(now_RT.radius);
   //Serial.println(now_RT.theta/PI*180);
-  //Serial.println(IR_sen.cal_close(now_RT.theta,now_radius)/PI*180);
-  Serial.println(micros()-a);
-  //delay(50);
+  Serial.println(IR_sen.cal_close(now_RT.theta,now_radius)/PI*180);
+  //Serial.println(micros()-a);
+  //delay(500);
 
 }

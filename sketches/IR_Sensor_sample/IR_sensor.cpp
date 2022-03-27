@@ -171,8 +171,8 @@ float IR_sensor::cal_close(float now_boal_theta,float now_boal_radius){
   float x,y,x_pre,y_pre;
   x_pre = now_boal_radius*cos(now_boal_theta);
   y_pre = now_boal_radius*sin(now_boal_theta);
-  if(x_pre > 0)x = (MAX_R - x_pre)/COR_VAL;else x = -(MAX_R + x_pre)/COR_VAL;
-  if(y_pre > 0)y = (MAX_R - y_pre)/COR_VAL;else y = -(MAX_R + y_pre)/COR_VAL;
+  if(x_pre >= 0)x = (MAX_R - x_pre)/COR_VAL;else x = -(MAX_R + x_pre)/COR_VAL;
+  if(y_pre >= 0)y = (MAX_R - y_pre)/COR_VAL;else y = -(MAX_R + y_pre)/COR_VAL;
 
   //与えられるthetaが -PI〜PI であるのが前提
   //atan()は -PI/2〜PI/2 を戻り値とする
@@ -181,7 +181,7 @@ float IR_sensor::cal_close(float now_boal_theta,float now_boal_radius){
    //Serial.println("red");
     float d = sqrt(x*x + y*y - R*R);
     float a = x*R - y*d;
-    float b = x*R + x*d;
+    float b = y*R + x*d;
     if(b == 0){
       if(now_boal_theta > 0)return PI/2;
       else return -PI/2;
@@ -191,7 +191,7 @@ float IR_sensor::cal_close(float now_boal_theta,float now_boal_radius){
    //a1,b1 blue
     float d = sqrt(x*x + y*y - R*R);
     float a = x*R + y*d;
-    float b = x*R - x*d;
+    float b = y*R - x*d;
     if(b == 0){
       if(now_boal_theta > 0)return PI/2;
       else return -PI/2;

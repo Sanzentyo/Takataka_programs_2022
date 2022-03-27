@@ -22,16 +22,16 @@
 #define TRIG_PIN 46
 #define I2C_Clock 8000000
 #define BOAL_RADIUS 3.6
-#define UNIT_RADIUS 8.5
-#define IR_UNIT_RADIUS 400
-#define MAX_R 1400
+#define UNIT_RADIUS 10
+#define IR_UNIT_RADIUS 450
+#define MAX_R 1100
 
 //ハードウェア依存
 uint8_t IR_PIN[8] = {A1,A2,A3,A4,A5,A6,A7,A8};//ピンの番号
 float IR_IN[8] = {5*PI/4, 3*PI/2, 7*PI/4, 0, PI/4, PI/2, 3*PI/4, PI};//ピンの角度
 float IR_cor[8] = {1.07,1.11,1.03,1.00,1.14,1.00,1.14,1.10};
 float theta_M[3] = {0.0,4*PI/3,2*PI/3};//モーターの角度
-int power = 100;
+int power = 50;
 
 //インスタンスの生成
 IR_sensor IR_sen(IR_PIN,IR_IN);
@@ -68,20 +68,20 @@ void loop() {
     Mom_now = Cal_dir.Cal_Mom_P(unit_dir);
     Boal_RT = IR_sen.cal_RT();
     now_radius = ma_radius.updateData(Boal_RT.radius);
-    Serial.println(now_radius);
+    //Serial.println(now_radius);
     if(now_radius < 100)Mctrl.moter_move(0,0,Mom_now);
     else if(now_radius < 500)Mctrl.moter_move(Boal_RT.theta,power,Mom_now);
     else if(now_radius < MAX_R*0.9){
       float now_x = now_radius*cos(Boal_RT.theta);
       
-      if((Boal_RT.theta < -2*PI/3) | (-IR_UNIT_RADIUS < now_x && Boal_RT.theta < 0)){
+      if((Boal_RT.theta < -2*PI/3) | (now_x < -IR_UNIT_RADIUS && Boal_RT.theta < 0)){
         round_theta = IR_sen.cal_close(Boal_RT.theta,now_radius);
         Mctrl.moter_move(round_theta,power,Mom_now);
-      }else if((Boal_RT.theta < -PI/2) && (now_x < IR_UNIT_RADIUS)){
-        Mctrl.moter_move(0,power,Mom_now);
-      }else if(Boal_RT.theta < -PI/3 ){
-        Mctrl.moter_move(PI,power,Mom_now);
-      }else if((Boal_RT.theta < PI/6) | (now_x < IR_UNIT_RADIUS)){
+      }/*else if(Boal_RT.theta < -PI/2){
+        Mctrl.moter_move(0,power,Mom_now);//右
+      }else if((Boal_RT.theta < -PI/3) && (now_x < IR_UNIT_RADIUS)){
+        Mctrl.moter_move(PI,power,Mom_now);//左
+      }*/else if((Boal_RT.theta < PI/6) | (now_x < IR_UNIT_RADIUS)){
         round_theta = IR_sen.cal_close(Boal_RT.theta,now_radius);
         Mctrl.moter_move(round_theta,power,Mom_now);
       }else if((Boal_RT.theta < PI/6) && (-IR_UNIT_RADIUS < now_x)){
