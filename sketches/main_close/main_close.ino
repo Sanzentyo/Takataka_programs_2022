@@ -71,17 +71,17 @@ void loop() {
     //Serial.println(now_radius);
     if(now_radius < 100)Mctrl.moter_move(0,0,Mom_now);
     else if(now_radius < 500)Mctrl.moter_move(Boal_RT.theta,power,Mom_now);
-    else if(now_radius < MAX_R*0.9){
+    else/* if(now_radius < MAX_R*0.9)*/{
       float now_x = now_radius*cos(Boal_RT.theta);
       
       if((Boal_RT.theta < -2*PI/3) | (now_x < -IR_UNIT_RADIUS && Boal_RT.theta < 0)){
         round_theta = IR_sen.cal_close(Boal_RT.theta,now_radius);
         Mctrl.moter_move(round_theta,power,Mom_now);
-      }/*else if(Boal_RT.theta < -PI/2){
+      }else if(Boal_RT.theta < -PI/2){
         Mctrl.moter_move(0,power,Mom_now);//右
       }else if((Boal_RT.theta < -PI/3) && (now_x < IR_UNIT_RADIUS)){
         Mctrl.moter_move(PI,power,Mom_now);//左
-      }*/else if((Boal_RT.theta < PI/6) | (now_x < IR_UNIT_RADIUS)){
+      }else if((Boal_RT.theta < PI/6) | (IR_UNIT_RADIUS < now_x)){
         round_theta = IR_sen.cal_close(Boal_RT.theta,now_radius);
         Mctrl.moter_move(round_theta,power,Mom_now);
       }else if((Boal_RT.theta < PI/6) && (-IR_UNIT_RADIUS < now_x)){
@@ -94,7 +94,7 @@ void loop() {
     /*else if(now_radius < MAX_R*0.9){
       round_theta = IR_sen.cal_close(Boal_RT.theta,now_radius);
       Mctrl.moter_move(round_theta,power,Mom_now);
-    }*/else{//Mctrl.moter_move(round_theta,0,Mom_now);
+    }else{//Mctrl.moter_move(round_theta,0,Mom_now);
       if(-PI <= Boal_RT.theta && Boal_RT.theta <= -7*PI/12)Mctrl.moter_move(-PI/2,power,Mom_now);
       else if(-7*PI/12 < Boal_RT.theta && Boal_RT.theta <= -PI/2)Mctrl.moter_move(0,power,Mom_now);
       else if(-PI/2 < Boal_RT.theta && Boal_RT.theta <= -5*PI/12)Mctrl.moter_move(PI,power,Mom_now);
@@ -102,7 +102,7 @@ void loop() {
       else if(0 < Boal_RT.theta && Boal_RT.theta <= PI/6)Mctrl.moter_move(Boal_RT.theta-PI/6,power,Mom_now);
       else if(PI/6 < Boal_RT.theta && Boal_RT.theta <= 5*PI/6)Mctrl.moter_move(Boal_RT.theta,power,Mom_now); 
       else if(5*PI/6 < Boal_RT.theta && Boal_RT.theta <= PI)Mctrl.moter_move(Boal_RT.theta+PI/6,power,Mom_now);
-    }
+    }*/
   }
 }
 
