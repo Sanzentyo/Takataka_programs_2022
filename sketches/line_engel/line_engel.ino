@@ -29,7 +29,7 @@ void setup() {
 
 void loop() {
   while(true){
-    for(short i = 0;i < DEV_NUM;i++){
+    for(byte i = 0;i < DEV_NUM;i++){
       //デジタル2
       if(i & (1<<0))digitalWrite(2,HIGH);
       else digitalWrite(2,LOW);
@@ -42,7 +42,7 @@ void loop() {
       //デジタル5
       if(i & (1<<3))digitalWrite(5,HIGH);
       else digitalWrite(5,LOW);
-  
+      //PORTD = i<<2;
       line_val[i] = analogRead(A0);
       if(line_val < AIR_TH)air_flag++;
       else if(LINE_TH < line_val){
