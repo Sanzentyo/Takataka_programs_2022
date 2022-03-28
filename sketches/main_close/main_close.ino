@@ -81,10 +81,10 @@ void loop() {
         Mctrl.moter_move(0,power,Mom_now);//右
       }else if((Boal_RT.theta < -PI/3) && (now_x < IR_UNIT_RADIUS)){
         Mctrl.moter_move(PI,power,Mom_now);//左
-      }else if((Boal_RT.theta < PI/6) | (IR_UNIT_RADIUS < now_x)){
+      }else if((PI/6 < Boal_RT.theta) | (IR_UNIT_RADIUS < now_x)){
         round_theta = IR_sen.cal_close(Boal_RT.theta,now_radius);
         Mctrl.moter_move(round_theta,power,Mom_now);
-      }else if((Boal_RT.theta < PI/6) && (-IR_UNIT_RADIUS < now_x)){
+      }else if((5*PI/6 < Boal_RT.theta) && (-IR_UNIT_RADIUS < now_x)){
         Mctrl.moter_move(G_dir,power,Mom_now);
       }else{
         round_theta = IR_sen.cal_close(Boal_RT.theta,now_radius);
