@@ -9,7 +9,6 @@
 
 //自作ライブラリ
 #include <Compass_dircal_PID.h>
-#include <Line_checker.h>
 #include <Compare_function.h>
 #include <IR_sensor.h>
 #include <moter_control.h>
@@ -53,10 +52,11 @@ void setup() {
   IR_sen.set_radius(UNIT_RADIUS,BOAL_RADIUS,MAX_R);
   Wire.begin();//i2c コンパス　モーター
   Wire.setClock(I2C_Clock);
-  //pinMode(START_PIN,INPUT);
-  //button_stay();
   setup_compass(&Compass_ctrl,&Cal_dir);
   Cal_dir.set_PID_par(0.64,0.2,0.1,0.004);
+  setupTimer5();
+  //pinMode(START_PIN,INPUT);
+  //button_stay();
 }
 
 void loop() {
@@ -113,4 +113,58 @@ void button_stay(){
     delayMicroseconds(10);
   }
   interrupts();//割り込み開始
+}
+
+
+//割り込みしたいのでここだけベタ書き
+void setupTimer5() {
+  noInterrupts();
+  // Clear registers
+  TCCR5A = 0;
+  TCCR5B = 0;
+  TCNT5 = 0;
+
+  // 1 Hz (16000000/((15624+1)*1024))
+  // 16000000/((OCR5A+1)*1024) Hz
+  OCR5A = 15624;
+  // CTC
+  TCCR5B |= (1 << WGM52);
+  // Prescaler 1024
+  TCCR5B |= (1 << CS52) | (1 << CS50);
+  // Output Compare Match A Interrupt Enable
+  TIMSK5 |= (1 << OCIE5A);
+  interrupts();
+}
+
+ISR(TIMER5_COMPA_vect){
+  noInterrupts();//割り込み停止
+  line_check();
+  interrupts();//割り込み開始
+}
+
+void line_check(){
+  byte dir = 0;
+  
+  while(Serial1.available() > 0){
+    dir = Serial1.read();
+  }
+
+  if(dir == 0){
+    return;
+  }else if(dir == 255){
+    unit_dir = Compass_ctrl.getVector(Adafruit_BNO055::VECTOR_EULER).x()/180*PI;//現在の絶対角度を取得
+    Mom_now = Cal_dir.Cal_Mom_P(unit_dir);
+    Mctrl.moter_move(0,0,Mom_now);
+    delayMicroseconds(100);
+    line_check();
+    return;
+  }else{
+    float esc_theta = map(dir,1,254,-PI,PI);
+    unit_dir = Compass_ctrl.getVector(Adafruit_BNO055::VECTOR_EULER).x()/180*PI;//現在の絶対角度を取得
+    Mom_now = Cal_dir.Cal_Mom_P(unit_dir);
+    Mctrl.moter_move(esc_theta,power,Mom_now);
+    delayMicroseconds(100);
+    line_check();
+    return;
+  }
 }
