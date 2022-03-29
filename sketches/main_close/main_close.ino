@@ -84,7 +84,7 @@ void loop() {
       }else if((PI/6 < Boal_RT.theta) | (IR_UNIT_RADIUS < now_x)){
         round_theta = IR_sen.cal_close(Boal_RT.theta,now_radius);
         Mctrl.moter_move(round_theta,power,Mom_now);
-      }else if((5*PI/6 < Boal_RT.theta) && (-IR_UNIT_RADIUS < now_x)){
+      }else if((Boal_RT.theta < 5*PI/6) && (-IR_UNIT_RADIUS < now_x)){
         Mctrl.moter_move(G_dir,power,Mom_now);
       }else{
         round_theta = IR_sen.cal_close(Boal_RT.theta,now_radius);
@@ -159,7 +159,7 @@ void line_check(){
     line_check();
     return;
   }else{
-    float esc_theta = map(dir,1,254,-PI,PI);
+    float esc_theta = map(dir,1,254,-180,180)/180*PI;
     unit_dir = Compass_ctrl.getVector(Adafruit_BNO055::VECTOR_EULER).x()/180*PI;//現在の絶対角度を取得
     Mom_now = Cal_dir.Cal_Mom_P(unit_dir);
     Mctrl.moter_move(esc_theta,power,Mom_now);

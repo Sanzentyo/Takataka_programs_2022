@@ -3,6 +3,7 @@
 #include <math.h>
 
 #define DEV_NUM 16
+#define TO_INT 1000
 #define AIR_TH 100
 #define LINE_TH 400
 
@@ -29,8 +30,8 @@ Adafruit_NeoPixel pixels(LED_COUNT, DIN_PIN, NEO_GRB + NEO_KHZ800);
 void setup() {
   Serial.begin(9600);
   for(short i = 0;i < DEV_NUM;i++){
-    unit_cos[i] = cos(unit_theta[i])*1000;
-    unit_sin[i] = sin(unit_theta[i])*1000;
+    unit_cos[i] = cos(unit_theta[i])*TO_INT;
+    unit_sin[i] = sin(unit_theta[i])*TO_INT;
   }
   for(int i = 0;i < 4;i++)pinMode(S[i],OUTPUT);
   pinMode(11,OUTPUT);
@@ -73,7 +74,7 @@ void loop() {
       }
     }
 
-    now_theta = (byte)(map(atan2(line_y,line_x),-PI,PI,1,254));
+    now_theta = (byte)(map(atan2(line_y,line_x)*TO_INT,-PI*TO_INT,PI*TO_INT,1,254));
 
     if(line_flag == 0)Serial.write(0);
     else if(air_flag > 5)Serial.write(255);
