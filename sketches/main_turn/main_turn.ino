@@ -64,12 +64,12 @@ void loop() {
   
   if(flag){
     euler = Compass_ctrl.getVector(Adafruit_BNO055::VECTOR_EULER);//現在の絶対角度を取得
-    Mom_now = Cal_dir.Cal_Mom_P(euler.x());
+    Mom_now = Cal_dir.Cal_Mom_P(euler.x()/180*PI);
     Boal_RT = IR_sen.cal_RT();
     now_radius = ma_radius.updateData(Boal_RT.radius);
-    Serial.println(now_radius);
+    //Serial.println(now_radius);
     if(now_radius < 100)Mctrl.moter_move(0,0,Mom_now);
-    else if((now_radius < 500) | (PI/6 < Boal_RT.theta && 2*PI/3))Mctrl.moter_move(Boal_RT.theta,power,Mom_now);
+    else if((now_radius < 500) | (PI/6 < Boal_RT.theta && 2*PI/3)|true)Mctrl.moter_move(Boal_RT.theta,power,Mom_now);
     else if(now_radius < MAX_R*0.9){
       round_theta = IR_sen.cal_close(Boal_RT.theta,now_radius);
       Mctrl.moter_move(round_theta,power,Mom_now);

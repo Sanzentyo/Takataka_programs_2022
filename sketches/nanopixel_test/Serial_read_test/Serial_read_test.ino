@@ -6,6 +6,7 @@ void setup() {
 void loop() {
   
   byte dir = 0;
+  Serial1.write(3);
   
   while(Serial1.available() > 0){
     dir = Serial1.read();

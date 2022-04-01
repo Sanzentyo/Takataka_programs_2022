@@ -4,6 +4,7 @@
 #include "moter_control.h"
 #include "moter_control_Serial.h"
 #include <Compare_function.h>
+#include <SPI.h>
 
 void Store_i2c(char* ads,float M_val){
   int val = M_val;
@@ -146,5 +147,43 @@ void moter_control::moter_move_Serial(float theta, int V_str, int V_rol){
 }
 
 void moter_control::moter_stop_Serial(){
+  moter_Serial_send(0,0,0);
+}
+
+void moter_control::SPI_setup(){
+  *mySPISettings = SPISettings(8000000, MSBFIRST, SPI_MODE0);
+  SPI.begin();
+  SPI.beginTransaction(*mySPISettings);
+  
+}
+
+void moter_control::moter_move_SPI(float theta, int V_str, int V_rol){
+  float V_x = V_str*cos(theta);
+  float V_y = V_str*sin(theta);
+  float M[3];
+  float max_per;
+  
+  //ベクトル計算
+  M[0] = V_x*cos_M[0] + V_y*sin_M[0] + V_rol;
+  M[1] = V_x*cos_M[1] + V_y*sin_M[1] + V_rol;
+  M[2] = V_x*cos_M[2] + V_y*sin_M[2] + V_rol;
+  
+  float V_st = abs_temp(V_str) + abs_temp(V_rol);
+  if(V_st <= 100){
+    max_per = V_st/max_ele_abs(M,3);
+  }else{
+    max_per = 100/max_ele_abs(M,3);
+  }
+  
+  for(int i = 0;i < 3;i++){
+    M[i] *= max_per;
+  }
+
+  moter_Serial_send(M[0],M[1],M[2]);
+
+  
+}
+
+void moter_control::moter_stop_SPI(){
   moter_Serial_send(0,0,0);
 }

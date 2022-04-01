@@ -12,9 +12,9 @@ void setup() {
 
 void loop(){
   
-  for(int i = -2;i < 2;i++){
-   Mctrl.moter_move_Serial(i*PI/2,50,0);
+  //for(int i = -2;i < 2;i++){
+   Mctrl.moter_move(PI/2,0,100);
    delay(1000);
-  }
+  //}
 
 }

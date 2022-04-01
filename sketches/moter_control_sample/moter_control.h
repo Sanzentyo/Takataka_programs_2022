@@ -2,6 +2,7 @@
 #define MOTER_CONTROL
 #include <Arduino.h>
 #include <Wire.h>
+#include <SPI.h>
 
 void Store_i2c(char* ads,float M_val);
 //void Send_i2c(char* ads);
@@ -13,6 +14,9 @@ class moter_control {
     void moter_stop();
     void moter_move_Serial(float theta, int V_str, int V_rol);
     void moter_stop_Serial();
+    void SPI_setup();
+    void moter_move_SPI(float theta, int V_str, int V_rol);
+    void moter_stop_SPI();
     
   private:
     //予めベクトル計算に用いる固定の三角比を計算させておく 全て定数
@@ -25,6 +29,9 @@ class moter_control {
     //処理に用いられるグローバル変数
     char moter_pow[6] = {0,0,0,0,0,0}; //モーター出力用
     char stop_pow[6] = {0,0,0,0,0,0}; //停止用
+
+    //SPI通信のための変数
+    SPISettings* mySPISettings;
 };
 
 
