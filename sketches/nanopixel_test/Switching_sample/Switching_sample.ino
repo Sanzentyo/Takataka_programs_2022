@@ -9,20 +9,21 @@ const int S[4] = {2,3,4,5};
 
 void setup() {
   Serial.begin(9600);
-  for(int i = 0;i < 4;i++)pinMode(S[i],OUTPUT);
-  pinMode(11,OUTPUT);
-  pinMode(A0,INPUT);
+  //D5(PE3),D7(PH4),D9(PH6)を出力に設定
+  DDRE |= (0b1 << 3); // bit3だけHighにする
+  DDRH |= (0b1 << 4); // bit4だけHighにする
+  DDRH |= (0b1 << 6); // bit6だけHighにする
 }
 
-byte bit = 0;
-
 void loop() {
-  digitalWrite(11,HIGH);
+  PORTE |= (0b1 << 3); // bit3だけHighにする
+  PORTH |= (0b1 << 4); // bit4だけHighにする
+  PORTH |= (0b1 << 6); // bit6だけHighにする
+  delay(3000);
+
 /*
-  for(short i = 0;i < 4;i++){
-    if(bit & (1<<i))digitalWrite(S[i],HIGH);
-    else digitalWrite(S[i],LOW);
-  }*/
-  //Serial.println(analogRead(A0));
-  delay(1000);
+  PORTE &= ~(0b1 << 3); // bit3だけLowにする
+  PORTH &= ~(0b1 << 4); // bit4だけLowにする
+  PORTH &= ~(0b1 << 6); // bit6だけLowにする
+  delay(3000);//*/
 }
