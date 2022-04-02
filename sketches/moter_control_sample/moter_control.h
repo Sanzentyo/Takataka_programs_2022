@@ -10,11 +10,16 @@ void Store_i2c(char* ads,float M_val);
 class moter_control {
   public:
     moter_control(float* theta_ads);
+
+    //ダイセン
     void moter_move(float theta, int V_str, int V_rol);
     void moter_stop();
     void moter_move_Serial(float theta, int V_str, int V_rol);
     void moter_stop_Serial();
+
+    //BLDCモーター
     void SPI_setup();
+    void set_MAX_POW(unsigned char max_pow);
     void moter_move_SPI(float theta, int V_str, int V_rol);
     void moter_stop_SPI();
     
@@ -31,6 +36,7 @@ class moter_control {
     char stop_pow[6] = {0,0,0,0,0,0}; //停止用
 
     //SPI通信のための変数
+    unsigned char MAX_POW = 100;
     SPISettings* mySPISettings;
 };
 

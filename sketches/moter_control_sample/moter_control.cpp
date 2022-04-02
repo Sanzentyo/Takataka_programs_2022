@@ -6,6 +6,10 @@
 #include <Compare_function.h>
 #include <SPI.h>
 
+#define POSI_DATA 255
+#define NEGA_DATA 254
+#define STOP_DATA 253
+
 void Store_i2c(char* ads,float M_val){
   int val = M_val;
     
@@ -151,10 +155,19 @@ void moter_control::moter_stop_Serial(){
 }
 
 void moter_control::SPI_setup(){
+  //SPI通信のためのセットアップ
   *mySPISettings = SPISettings(8000000, MSBFIRST, SPI_MODE0);
   SPI.begin();
   SPI.beginTransaction(*mySPISettings);
   
+  //D5(PE3),D7(PH4),D9(PH6)を出力に設定
+  DDRE |= (0b1 << 3); // bit3だけHighにする
+  DDRH |= (0b1 << 4); // bit4だけHighにする
+  DDRH |= (0b1 << 6); // bit6だけHighにする
+}
+
+void moter_control::set_MAX_POW(unsigned char max_pow){
+  MAX_POW = max_pow;
 }
 
 void moter_control::moter_move_SPI(float theta, int V_str, int V_rol){
@@ -169,21 +182,85 @@ void moter_control::moter_move_SPI(float theta, int V_str, int V_rol){
   M[2] = V_x*cos_M[2] + V_y*sin_M[2] + V_rol;
   
   float V_st = abs_temp(V_str) + abs_temp(V_rol);
-  if(V_st <= 100){
+  if(V_st <= MAX_POW){
     max_per = V_st/max_ele_abs(M,3);
   }else{
-    max_per = 100/max_ele_abs(M,3);
+    max_per = MAX_POW/max_ele_abs(M,3);
   }
   
   for(int i = 0;i < 3;i++){
     M[i] *= max_per;
   }
 
-  moter_Serial_send(M[0],M[1],M[2]);
+  
 
+  //M0,M1,M2までそれぞれSSピンはD5(PE3),D7(PH4),D9(PH6)に対応する
+  //https://ht-deko.com/arduino/portregisters.html
+  byte send_data;//送信用
+
+  //M0 D5 PE3
+  // 3. 現在の設定を退避し、指定した設定をマイコンに反映させSPI通信を開始する
+  SPI.beginTransaction(*mySPISettings);
+
+  // 4. 制御するデバイスに通信の開始を通知する
+  PORTE &= ~(0b1 << 3); // bit3だけLowにする
+  
+  // 5. 2バイトを送受信する
+  //正転(時計回り)か逆転(反時計回り)かを先に伝える
+  if(M[0] > 0)SPI.transfer(POSI_DATA);
+  else SPI.transfer(POSI_DATA);
+  
+  //powerに該当するdataを送る
+  send_data = M[0];
+  SPI.transfer(send_data);
+
+  // 6. 制御するデバイスに通信の終了を通知する
+  PORTE |= (0b1 << 3); // bit3だけHighにする
+
+  // 7. SPI通信を終了し設定を以前の状態に戻す
+  SPI.endTransaction();
+
+  //M1 D7 PH4
+  SPI.beginTransaction(*mySPISettings);
+  PORTH &= ~(0b1 << 4);
+  if(M[1] > 0)SPI.transfer(POSI_DATA);
+  else SPI.transfer(POSI_DATA);
+  send_data = M[1];
+  SPI.transfer(send_data);
+  PORTH |= (0b1 << 4);
+  SPI.endTransaction();
+
+  //M2 D9 PH6
+  SPI.beginTransaction(*mySPISettings);
+  PORTH &= ~(0b1 << 6);
+  if(M[2] > 0)SPI.transfer(POSI_DATA);
+  else SPI.transfer(POSI_DATA);
+  send_data = M[2];
+  SPI.transfer(send_data);
+  PORTH |= (0b1 << 6);
+  SPI.endTransaction();
   
 }
 
 void moter_control::moter_stop_SPI(){
-  moter_Serial_send(0,0,0);
+  //M0 D5 PE3
+  SPI.beginTransaction(*mySPISettings);
+  PORTH &= ~(0b1 << 4);
+  SPI.transfer(STOP_DATA);
+  PORTH |= (0b1 << 4);
+  SPI.endTransaction();
+  
+  //M1 D7 PH4
+  SPI.beginTransaction(*mySPISettings);
+  PORTH &= ~(0b1 << 4);
+  SPI.transfer(STOP_DATA);
+  PORTH |= (0b1 << 4);
+  SPI.endTransaction();
+
+  //M2 D9 PH6
+  SPI.beginTransaction(*mySPISettings);
+  PORTH &= ~(0b1 << 6);
+  SPI.transfer(STOP_DATA);
+  PORTH |= (0b1 << 6);
+  SPI.endTransaction();
 }
