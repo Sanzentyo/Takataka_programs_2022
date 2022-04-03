@@ -245,9 +245,9 @@ void moter_control::moter_move_SPI(float theta, int V_str, int V_rol){
 void moter_control::moter_stop_SPI(){
   //M0 D5 PE3
   SPI.beginTransaction(*mySPISettings);
-  PORTH &= ~(0b1 << 4);
+  PORTE &= ~(0b1 << 3);
   SPI.transfer(STOP_DATA);
-  PORTH |= (0b1 << 4);
+  PORTE |= (0b1 << 3);
   SPI.endTransaction();
   
   //M1 D7 PH4
