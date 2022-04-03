@@ -211,7 +211,7 @@ void moter_control::moter_move_SPI(float theta, int V_str, int V_rol){
   else SPI.transfer(POSI_DATA);
   
   //powerに該当するdataを送る
-  send_data = M[0];
+  send_data = abs_temp(M[0]);
   SPI.transfer(send_data);
 
   // 6. 制御するデバイスに通信の終了を通知する
@@ -225,7 +225,7 @@ void moter_control::moter_move_SPI(float theta, int V_str, int V_rol){
   PORTH &= ~(0b1 << 4);
   if(M[1] > 0)SPI.transfer(POSI_DATA);
   else SPI.transfer(POSI_DATA);
-  send_data = M[1];
+  send_data = abs_temp(M[1]);
   SPI.transfer(send_data);
   PORTH |= (0b1 << 4);
   SPI.endTransaction();
@@ -235,7 +235,7 @@ void moter_control::moter_move_SPI(float theta, int V_str, int V_rol){
   PORTH &= ~(0b1 << 6);
   if(M[2] > 0)SPI.transfer(POSI_DATA);
   else SPI.transfer(POSI_DATA);
-  send_data = M[2];
+  send_data = abs_temp(M[2]);
   SPI.transfer(send_data);
   PORTH |= (0b1 << 6);
   SPI.endTransaction();
