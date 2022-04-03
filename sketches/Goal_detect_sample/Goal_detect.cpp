@@ -1,18 +1,22 @@
 #include "Goal_detect.h"
+#include <math.h>
 
-Goal_detecter::Goal_detecter(int length,int width){
-  field_length = length;
+Goal_detecter::Goal_detecter(int height,int width){
+  field_height = height;
   field_width = width;
 };
 
-void Goal_detecter::set_field(int length,int width){
-  field_length = length;
+void Goal_detecter::set_field(int height,int width){
+  field_height = height;
   field_width = width;
 };
 
 float Goal_detecter::detect(float now_diff,int a,int b,int c){
-  if(a > b){
-    a = a;
+  float now_cos = cos(now_diff);
+  if(a < c){
+    return atan2(field_height-b*now_cos,field_width-a*now_cos);
+  }else{
+    return atan2(field_height-b*now_cos,-(field_width-c*now_cos));
   }
 
   return -1;
