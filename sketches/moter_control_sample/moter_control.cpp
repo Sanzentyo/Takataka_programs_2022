@@ -161,9 +161,9 @@ void moter_control::SPI_setup(){
   SPI.beginTransaction(*mySPISettings);
   
   //D5(PE3),D7(PH4),D9(PH6)を出力に設定
-  DDRE |= (0b1 << 3); // bit3だけHighにする
-  DDRH |= (0b1 << 4); // bit4だけHighにする
-  DDRH |= (0b1 << 6); // bit6だけHighにする
+  DDRE |=  0b00001000; // bit3だけHighにする
+  DDRH |=  0b00010000; // bit4だけHighにする
+  DDRH |=  0b01000000; // bit6だけHighにする
 }
 
 void moter_control::set_MAX_POW(unsigned char max_pow){
@@ -203,7 +203,7 @@ void moter_control::moter_move_SPI(float theta, int V_str, int V_rol){
   SPI.beginTransaction(*mySPISettings);
 
   // 4. 制御するデバイスに通信の開始を通知する
-  PORTE &= ~(0b1 << 3); // bit3だけLowにする
+  PORTE &= ~0b00001000; // bit3だけLowにする
   
   // 5. 2バイトを送受信する
   //正転(時計回り)か逆転(反時計回り)かを先に伝える
@@ -215,29 +215,29 @@ void moter_control::moter_move_SPI(float theta, int V_str, int V_rol){
   SPI.transfer(send_data);
 
   // 6. 制御するデバイスに通信の終了を通知する
-  PORTE |= (0b1 << 3); // bit3だけHighにする
+  PORTE |= 0b00001000; // bit3だけHighにする
 
   // 7. SPI通信を終了し設定を以前の状態に戻す
   SPI.endTransaction();
 
   //M1 D7 PH4
   SPI.beginTransaction(*mySPISettings);
-  PORTH &= ~(0b1 << 4);
+  PORTH &= ~0b00010000; // bit4だけLowにする
   if(M[1] > 0)SPI.transfer(POSI_DATA);
   else SPI.transfer(POSI_DATA);
   send_data = abs_temp(M[1]);
   SPI.transfer(send_data);
-  PORTH |= (0b1 << 4);
+  PORTH |= 0b00010000; // bit4だけHighにする
   SPI.endTransaction();
 
   //M2 D9 PH6
   SPI.beginTransaction(*mySPISettings);
-  PORTH &= ~(0b1 << 6);
+  PORTH &= ~0b01000000; // bit6だけLowにする
   if(M[2] > 0)SPI.transfer(POSI_DATA);
   else SPI.transfer(POSI_DATA);
   send_data = abs_temp(M[2]);
   SPI.transfer(send_data);
-  PORTH |= (0b1 << 6);
+  PORTH |= 0b01000000; // bit6だけHighにする
   SPI.endTransaction();
   
 }
@@ -245,22 +245,22 @@ void moter_control::moter_move_SPI(float theta, int V_str, int V_rol){
 void moter_control::moter_stop_SPI(){
   //M0 D5 PE3
   SPI.beginTransaction(*mySPISettings);
-  PORTE &= ~(0b1 << 3);
+  PORTE &= ~0b00001000; // bit3だけLowにする
   SPI.transfer(STOP_DATA);
-  PORTE |= (0b1 << 3);
+  PORTE |= 0b00001000; // bit3だけHighにする
   SPI.endTransaction();
   
   //M1 D7 PH4
   SPI.beginTransaction(*mySPISettings);
-  PORTH &= ~(0b1 << 4);
+  PORTH &= ~0b00010000; // bit4だけLowにする
   SPI.transfer(STOP_DATA);
-  PORTH |= (0b1 << 4);
+  PORTH |= 0b00010000; // bit4だけHighにする
   SPI.endTransaction();
 
   //M2 D9 PH6
   SPI.beginTransaction(*mySPISettings);
-  PORTH &= ~(0b1 << 6);
+  PORTH &= ~0b01000000; // bit6だけLowにする
   SPI.transfer(STOP_DATA);
-  PORTH |= (0b1 << 6);
+  PORTH |= 0b01000000; // bit6だけHighにする
   SPI.endTransaction();
 }
