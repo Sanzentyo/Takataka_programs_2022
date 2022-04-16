@@ -36,8 +36,7 @@ class moter_control {
     char stop_pow[6] = {0,0,0,0,0,0}; //停止用
 
     //SPI通信のための変数
-    unsigned char MAX_POW = 100;
-    SPISettings* mySPISettings;
+    unsigned char MAX_POW = 30;
 };
 
 

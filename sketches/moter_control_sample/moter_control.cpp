@@ -10,6 +10,8 @@
 #define NEGA_DATA 254
 #define STOP_DATA 253
 
+#define MINUS 101
+
 void Store_i2c(char* ads,float M_val){
   int val = M_val;
     
@@ -156,14 +158,17 @@ void moter_control::moter_stop_Serial(){
 
 void moter_control::SPI_setup(){
   //SPI通信のためのセットアップ
-  *mySPISettings = SPISettings(8000000, MSBFIRST, SPI_MODE0);
   SPI.begin();
-  SPI.beginTransaction(*mySPISettings);
   
   //D5(PE3),D7(PH4),D9(PH6)を出力に設定
   DDRE |=  0b00001000; // bit3だけHighにする
   DDRH |=  0b00010000; // bit4だけHighにする
   DDRH |=  0b01000000; // bit6だけHighにする
+
+  PORTE |= 0b00001000; // bit3だけHighにする
+  PORTH |= 0b00010000; // bit4だけHighにする
+  PORTH |= 0b01000000; // bit6だけHighにする
+  
 }
 
 void moter_control::set_MAX_POW(unsigned char max_pow){
@@ -200,67 +205,56 @@ void moter_control::moter_move_SPI(float theta, int V_str, int V_rol){
 
   //M0 D5 PE3
   // 3. 現在の設定を退避し、指定した設定をマイコンに反映させSPI通信を開始する
-  SPI.beginTransaction(*mySPISettings);
+  //SPI.beginTransaction(*mySPISettings);
 
   // 4. 制御するデバイスに通信の開始を通知する
   PORTE &= ~0b00001000; // bit3だけLowにする
   
   // 5. 2バイトを送受信する
   //正転(時計回り)か逆転(反時計回り)かを先に伝える
-  if(M[0] > 0)SPI.transfer(POSI_DATA);
-  else SPI.transfer(POSI_DATA);
+  /*if(M[0] > 0)SPI.transfer(POSI_DATA);
+  else SPI.transfer(POSI_DATA);*/
   
   //powerに該当するdataを送る
-  send_data = abs_temp(M[0]);
+  if(M[0] >= 0)send_data = M[0];
+  else send_data = -M[0] + MINUS;
   SPI.transfer(send_data);
 
   // 6. 制御するデバイスに通信の終了を通知する
   PORTE |= 0b00001000; // bit3だけHighにする
 
   // 7. SPI通信を終了し設定を以前の状態に戻す
-  SPI.endTransaction();
+  //SPI.endTransaction();
 
   //M1 D7 PH4
-  SPI.beginTransaction(*mySPISettings);
   PORTH &= ~0b00010000; // bit4だけLowにする
-  if(M[1] > 0)SPI.transfer(POSI_DATA);
-  else SPI.transfer(POSI_DATA);
-  send_data = abs_temp(M[1]);
+  if(M[1] >= 0)send_data = M[1];
+  else send_data = -M[1] + MINUS;
   SPI.transfer(send_data);
   PORTH |= 0b00010000; // bit4だけHighにする
-  SPI.endTransaction();
 
   //M2 D9 PH6
-  SPI.beginTransaction(*mySPISettings);
   PORTH &= ~0b01000000; // bit6だけLowにする
-  if(M[2] > 0)SPI.transfer(POSI_DATA);
-  else SPI.transfer(POSI_DATA);
-  send_data = abs_temp(M[2]);
+  if(M[2] >= 0)send_data = M[2];
+  else send_data = -M[2] + MINUS;
   SPI.transfer(send_data);
   PORTH |= 0b01000000; // bit6だけHighにする
-  SPI.endTransaction();
   
 }
 
 void moter_control::moter_stop_SPI(){
   //M0 D5 PE3
-  SPI.beginTransaction(*mySPISettings);
   PORTE &= ~0b00001000; // bit3だけLowにする
   SPI.transfer(STOP_DATA);
   PORTE |= 0b00001000; // bit3だけHighにする
-  SPI.endTransaction();
   
   //M1 D7 PH4
-  SPI.beginTransaction(*mySPISettings);
   PORTH &= ~0b00010000; // bit4だけLowにする
   SPI.transfer(STOP_DATA);
   PORTH |= 0b00010000; // bit4だけHighにする
-  SPI.endTransaction();
 
   //M2 D9 PH6
-  SPI.beginTransaction(*mySPISettings);
   PORTH &= ~0b01000000; // bit6だけLowにする
   SPI.transfer(STOP_DATA);
   PORTH |= 0b01000000; // bit6だけHighにする
-  SPI.endTransaction();
 }
