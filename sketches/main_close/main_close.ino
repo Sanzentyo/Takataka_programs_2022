@@ -69,8 +69,8 @@ void loop() {
     Boal_RT = IR_sen.cal_RT();
     now_radius = ma_radius.updateData(Boal_RT.radius);
     //Serial.println(now_radius);
-    if(now_radius < 100)Mctrl.moter_move(0,0,Mom_now);
-    else if(now_radius < 500)Mctrl.moter_move(Boal_RT.theta,power,Mom_now);
+    if(now_radius < 100 && false)Mctrl.moter_move(0,0,Mom_now);
+    else if(now_radius < 500 | true)Mctrl.moter_move(Boal_RT.theta,power,Mom_now);
     else/* if(now_radius < MAX_R*0.9)*/{
       float now_x = now_radius*cos(Boal_RT.theta);
       

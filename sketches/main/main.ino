@@ -67,11 +67,12 @@ void loop() {
   //回り込みなどを書き足したもの
   if(flag){
     euler = Compass_ctrl.getVector(Adafruit_BNO055::VECTOR_EULER);//現在の絶対角度を取得
-    Mom_now = Cal_dir.Cal_Mom_P(euler.x());
+    Mom_now = Cal_dir.Cal_Mom_P(euler.x()/180*PI);
     Boal_RT = IR_sen.cal_RT();
     Serial.println(Boal_RT.theta);
-    if(Boal_RT.radius > 100){
-      if(-PI <= Boal_RT.theta && Boal_RT.theta <= -7*PI/12)Mctrl.moter_move(-PI/2,power,Mom_now);
+    if((Boal_RT.radius > 100) | true){
+      if(true)Mctrl.moter_move(Boal_RT.theta,0,-50);
+      else if(-PI <= Boal_RT.theta && Boal_RT.theta <= -7*PI/12)Mctrl.moter_move(-PI/2,power,Mom_now);
       else if(-7*PI/12 < Boal_RT.theta && Boal_RT.theta <= -PI/2)Mctrl.moter_move(0,power,Mom_now);
       else if(-PI/2 < Boal_RT.theta && Boal_RT.theta <= -5*PI/12)Mctrl.moter_move(PI,power,Mom_now);
       else if(-5*PI/12 < Boal_RT.theta && Boal_RT.theta <= 0)Mctrl.moter_move(-PI/2,power,Mom_now);

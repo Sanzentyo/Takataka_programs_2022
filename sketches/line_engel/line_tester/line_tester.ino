@@ -45,15 +45,22 @@ void setup() {
 }
 
 byte val;
-byte i = 0;
+int i = 15;
+int temp;
+byte a1,a2,a3;
 
 void loop() {
   while(true){
     //for(byte i = 0;i < DEV_NUM;i++){
-  
+      //Serial.println(Serial.read() - 48);
   //シリアル通信で最後書き込んだ数値に対応したポートの値を表す
   while(Serial.available() > 0){
-    i = Serial.read();
+    temp = Serial.read() - 48;
+    if(temp != -38)
+      if(temp < 10)i = temp;
+      else i = temp - 7;
+
+  //Serial.println(i);
   }
       /*//デジタル2
       if(i & (1<<0))digitalWrite(2,HIGH);
@@ -68,8 +75,10 @@ void loop() {
       if(i & (1<<3))digitalWrite(5,HIGH);
       else digitalWrite(5,LOW);
       //*/PORTD = i<<2;
-      val = analogRead(A0);
-      Serial.write(val);
+      //val = analogRead(A0);
+      //Serial.println(i);
+      //delay(500);
+      //Serial.write(val);
       /*
       if(line_val < air_th[i])air_flag++;
       else if(line_th[i] < line_val){
