@@ -14,7 +14,7 @@ void setup() {
 void loop(){
   
   //for(int i = -2;i < 2;i++){
-   Mctrl.moter_move_SPI(PI/2,0,100);
+   Mctrl.moter_move_SPI(PI/2,0,20);
    delay(1000);
   //}
 

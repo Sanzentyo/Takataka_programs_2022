@@ -1,17 +1,13 @@
 void setup() {
   Serial.begin(9600);
-  Serial1.begin(9600);
+  for(int i = 3;i < 9;i++)pinMode(i,OUTPUT);
 }
 
 void loop() {
   
-  byte dir = 0;
-  Serial1.write(3);
-  
-  while(Serial1.available() > 0){
-    dir = Serial1.read();
-  }
-
-  Serial.println(dir);
-  delay(50);
+  //for(int i = 3;i < 9;i++)digitalWrite(i,HIGH);
+  //delay(500);
+  //for(int i = 3;i < 9;i++)digitalWrite(i,LOW);
+  //delay(500);
+  Serial.println(digitalRead(7));
 }

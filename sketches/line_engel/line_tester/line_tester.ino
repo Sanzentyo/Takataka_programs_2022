@@ -28,7 +28,7 @@ const int LED_COUNT = 16; // LEDの数
 Adafruit_NeoPixel pixels(LED_COUNT, DIN_PIN, NEO_GRB + NEO_KHZ800);
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);
   for(short i = 0;i < DEV_NUM;i++){
     unit_cos[i] = cos(unit_theta[i])*TO_INT;
     unit_sin[i] = sin(unit_theta[i])*TO_INT;
@@ -39,15 +39,14 @@ void setup() {
   pixels.begin();
   pixels.clear();
   for (int i = 0;i < 16;i++) {
-   pixels.setPixelColor(i, pixels.Color(128, 128, 128)); // 0番目の色を変える
+   pixels.setPixelColor(i, pixels.Color(0, 0, 0)); // 0番目の色を変える
   }
   pixels.show();//*/
 }
 
-byte val;
-int i = 15;
+int val;
+int i = 3;
 int temp;
-byte a1,a2,a3;
 
 void loop() {
   while(true){
@@ -55,10 +54,12 @@ void loop() {
       //Serial.println(Serial.read() - 48);
   //シリアル通信で最後書き込んだ数値に対応したポートの値を表す
   while(Serial.available() > 0){
+    i = Serial.read();
+    /*
     temp = Serial.read() - 48;
     if(temp != -38)
       if(temp < 10)i = temp;
-      else i = temp - 7;
+      else i = temp - 7;*/
 
   //Serial.println(i);
   }
@@ -75,10 +76,11 @@ void loop() {
       if(i & (1<<3))digitalWrite(5,HIGH);
       else digitalWrite(5,LOW);
       //*/PORTD = i<<2;
-      //val = analogRead(A0);
+      val = analogRead(A0);
       //Serial.println(i);
-      //delay(500);
+      sendIntData(val); // int型データの送信
       //Serial.write(val);
+      delay(500);
       /*
       if(line_val < air_th[i])air_flag++;
       else if(line_th[i] < line_val){
@@ -96,4 +98,13 @@ void loop() {
    */ 
   }
 
+}
+
+
+//from https://kougaku-navi.hatenablog.com/entry/20140501/p1
+// int型のデータを送信する関数
+void sendIntData(int value) {
+  Serial.write('H'); // ヘッダの送信
+  Serial.write(lowByte(value)); // 下位バイトの送信
+  Serial.write(highByte(value)); // 上位バイトの送信
 }

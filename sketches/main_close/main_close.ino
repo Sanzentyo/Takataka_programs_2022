@@ -25,6 +25,9 @@
 #define IR_UNIT_RADIUS 450
 #define MAX_R 1100
 
+#define MOVE moter_move_SPI
+#define STOP moter_stop_SPI
+
 //ハードウェア依存
 uint8_t IR_PIN[8] = {A1,A2,A3,A4,A5,A6,A7,A8};//ピンの番号
 float IR_IN[8] = {5*PI/4, 3*PI/2, 7*PI/4, 0, PI/4, PI/2, 3*PI/4, PI};//ピンの角度
@@ -48,12 +51,19 @@ int Mom_now;
 void setup() {
   Serial.begin(9600);//デバック
   Serial1.begin(9600);//ラインセンサー
+  
   IR_sen.set_cor(IR_cor);
   IR_sen.set_radius(UNIT_RADIUS,BOAL_RADIUS,MAX_R);
+  
   Wire.begin();//i2c コンパス　モーター
   Wire.setClock(I2C_Clock);
-  setup_compass(&Compass_ctrl,&Cal_dir);
+  
+  //setup_compass(&Compass_ctrl,&Cal_dir);
   Cal_dir.set_PID_par(0.64,0.2,0.1,0.004);
+  
+  Mctrl.SPI_setup();
+  Mctrl.set_MAX_POW(30);
+  
   setupTimer5();
   //pinMode(START_PIN,INPUT);
   //button_stay();
@@ -61,7 +71,7 @@ void setup() {
 
 void loop() {
   //Serial.println(Boal_RT.theta);
-  bool flag = true;//line_check(&Mctrl,power);
+  bool flag = false;//line_check(&Mctrl,power);
   
   if(flag){
     unit_dir = Compass_ctrl.getVector(Adafruit_BNO055::VECTOR_EULER).x()/180*PI;//現在の絶対角度を取得
@@ -138,7 +148,8 @@ void setupTimer5() {
 
 ISR(TIMER5_COMPA_vect){
   noInterrupts();//割り込み停止
-  line_check();
+  Serial.println("Yo");
+  //line_check();
   interrupts();//割り込み開始
 }
 
@@ -154,7 +165,7 @@ void line_check(){
   }else if(dir == 255){
     unit_dir = Compass_ctrl.getVector(Adafruit_BNO055::VECTOR_EULER).x()/180*PI;//現在の絶対角度を取得
     Mom_now = Cal_dir.Cal_Mom_P(unit_dir);
-    Mctrl.moter_move(0,0,Mom_now);
+    Mctrl.MOVE(0,0,Mom_now);
     delayMicroseconds(100);
     line_check();
     return;
