@@ -23,7 +23,7 @@ short air_flag = 0;
 short line_flag = 0;
 
 const int DIN_PIN = 6; // D6
-const int LED_COUNT = 16; // LEDの数
+const int LED_COUNT = 15; // LEDの数
 
 Adafruit_NeoPixel pixels(LED_COUNT, DIN_PIN, NEO_GRB + NEO_KHZ800);
 
@@ -38,18 +38,19 @@ void setup() {
   pinMode(A0,INPUT);
   pixels.begin();
   pixels.clear();
-  for (int i = 0;i < 16;i++) {
-   pixels.setPixelColor(i, pixels.Color(0, 0, 0)); // 0番目の色を変える
+  for (int i = 0;i < 15;i++) {
+   pixels.setPixelColor(i, pixels.Color(128, 128, 128)); // 0番目の色を変える
   }
-  pixels.show();//*/
+  //for(int i = 0;i < 5;i++)pixels.show();//*/
 }
 
 int val;
-int i = 3;
+int i = 15;
 int temp;
 
 void loop() {
   while(true){
+    //pixels.show();
     //for(byte i = 0;i < DEV_NUM;i++){
       //Serial.println(Serial.read() - 48);
   //シリアル通信で最後書き込んだ数値に対応したポートの値を表す
@@ -78,9 +79,10 @@ void loop() {
       //*/PORTD = i<<2;
       val = analogRead(A0);
       //Serial.println(i);
+      //val = 100;
       sendIntData(val); // int型データの送信
       //Serial.write(val);
-      delay(500);
+      delay(1000);
       /*
       if(line_val < air_th[i])air_flag++;
       else if(line_th[i] < line_val){

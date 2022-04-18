@@ -1,5 +1,6 @@
 void setup() {
   Serial.begin(9600);
+  Serial1.begin(115200);
   for(int i = 3;i < 9;i++)pinMode(i,OUTPUT);
 }
 

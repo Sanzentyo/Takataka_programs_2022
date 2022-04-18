@@ -1,5 +1,5 @@
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);
   Serial1.begin(115200);
 
 }
@@ -26,11 +26,11 @@ void loop() {
       recv_data = makeWord(high,low); // 上位バイトと下位バイトを合体させてint型データを復元
       Serial.println(recv_data);
     }
-    //delay(500);
-  /*
-  while(Serial1.available() > 0){
-  Serial.println(Serial1.read());
   }//*/
-  }
+  //delay(1000);
+  
+  /*while(Serial1.available() > 0){
+    Serial.println(Serial1.read());
+  }//*/
 
 }
