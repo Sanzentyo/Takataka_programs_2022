@@ -33,7 +33,7 @@ uint8_t IR_PIN[8] = {A1,A2,A3,A4,A5,A6,A7,A8};//ピンの番号
 float IR_IN[8] = {5*PI/4, 3*PI/2, 7*PI/4, 0, PI/4, PI/2, 3*PI/4, PI};//ピンの角度
 float IR_cor[8] = {1.07,1.11,1.03,1.00,1.14,1.00,1.14,1.10};
 float theta_M[3] = {0.0,4*PI/3,2*PI/3};//モーターの角度
-int power = 100;
+int power = 30;
 
 //インスタンスの生成
 IR_sensor IR_sen(IR_PIN,IR_IN);
@@ -49,8 +49,8 @@ float now_radius,now_theta,round_theta,G_dir = PI/2,unit_dir;
 int Mom_now;
 
 void setup() {
-  Serial.begin(9600);//デバック
-  Serial1.begin(9600);//ラインセンサー
+  Serial.begin(115200);//デバック
+  Serial1.begin(115200);//ラインセンサー
   
   IR_sen.set_cor(IR_cor);
   IR_sen.set_radius(UNIT_RADIUS,BOAL_RADIUS,MAX_R);
@@ -64,7 +64,7 @@ void setup() {
   Mctrl.SPI_setup();
   Mctrl.set_MAX_POW(30);
   
-  setupTimer5();
+  //setupTimer5();//linechecker
   //pinMode(START_PIN,INPUT);
   //button_stay();
 }
@@ -75,7 +75,7 @@ void loop() {
   
   if(flag){
     unit_dir = Compass_ctrl.getVector(Adafruit_BNO055::VECTOR_EULER).x()/180*PI;//現在の絶対角度を取得
-    Mom_now = Cal_dir.Cal_Mom_P(unit_dir);
+    Mom_now = 0;//Cal_dir.Cal_Mom_P(unit_dir);
     Boal_RT = IR_sen.cal_RT();
     now_radius = ma_radius.updateData(Boal_RT.radius);
     //Serial.println(now_radius);
@@ -86,19 +86,19 @@ void loop() {
       
       if((Boal_RT.theta < -2*PI/3) | (now_x < -IR_UNIT_RADIUS && Boal_RT.theta < 0)){
         round_theta = IR_sen.cal_close(Boal_RT.theta,now_radius);
-        Mctrl.moter_move(round_theta,power,Mom_now);
+        Mctrl.MOVE(round_theta,power,Mom_now);
       }else if(Boal_RT.theta < -PI/2){
-        Mctrl.moter_move(0,power,Mom_now);//右
+        Mctrl.MOVE(0,power,Mom_now);//右
       }else if((Boal_RT.theta < -PI/3) && (now_x < IR_UNIT_RADIUS)){
-        Mctrl.moter_move(PI,power,Mom_now);//左
+        Mctrl.MOVE(PI,power,Mom_now);//左
       }else if((PI/6 < Boal_RT.theta) | (IR_UNIT_RADIUS < now_x)){
         round_theta = IR_sen.cal_close(Boal_RT.theta,now_radius);
-        Mctrl.moter_move(round_theta,power,Mom_now);
+        Mctrl.MOVE(round_theta,power,Mom_now);
       }else if((Boal_RT.theta < 5*PI/6) && (-IR_UNIT_RADIUS < now_x)){
-        Mctrl.moter_move(G_dir,power,Mom_now);
+        Mctrl.MOVE(G_dir,power,Mom_now);
       }else{
         round_theta = IR_sen.cal_close(Boal_RT.theta,now_radius);
-        Mctrl.moter_move(round_theta,power,Mom_now);
+        Mctrl.MOVE(round_theta,power,Mom_now);
       }
     }
     /*else if(now_radius < MAX_R*0.9){
@@ -148,8 +148,8 @@ void setupTimer5() {
 
 ISR(TIMER5_COMPA_vect){
   noInterrupts();//割り込み停止
-  Serial.println("Yo");
-  //line_check();
+  //Serial.println("Yo");
+  line_check();
   interrupts();//割り込み開始
 }
 

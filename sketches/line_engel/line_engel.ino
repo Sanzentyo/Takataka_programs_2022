@@ -7,11 +7,11 @@
 #define AIR_TH 100
 #define LINE_TH 400
 
-float unit_theta[DEV_NUM] = {0,PI/8,PI/4,3*PI/8,PI/2,5*PI/8,3*PI/4,7*PI/8,PI,9*PI/8,5*PI/4,11*PI/8,3*PI/4,13*PI/8,7*PI/4,15*PI/8};
+float unit_theta[DEV_NUM] = {9*PI/16,11*PI/16,13*PI/16,15*PI/16,17*PI/16,19*PI/16,21*PI/16,23*PI/16,25*PI/16,27*PI/16,29*PI/16,31*PI/16,PI/16,3*PI/16,5*PI/16,7*PI/16};
 int unit_cos[DEV_NUM];
 int unit_sin[DEV_NUM];
 int air_th[DEV_NUM] = {100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100};
-int line_th[DEV_NUM] = {400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400};
+int line_th[DEV_NUM] = {600,600,600,600,600,600,600,600,600,600,600,600,600,600,600,600};
 int unit_index[DEV_NUM] = {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15};
 int S[4] = {2,3,4,5};
 
@@ -23,12 +23,12 @@ short air_flag = 0;
 short line_flag = 0;
 
 const int DIN_PIN = 6; // D6
-const int LED_COUNT = 16; // LEDの数
+const int LED_COUNT = 15; // LEDの数
 
 Adafruit_NeoPixel pixels(LED_COUNT, DIN_PIN, NEO_GRB + NEO_KHZ800);
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);
   for(short i = 0;i < DEV_NUM;i++){
     unit_cos[i] = cos(unit_theta[i])*TO_INT;
     unit_sin[i] = sin(unit_theta[i])*TO_INT;
@@ -38,10 +38,10 @@ void setup() {
   pinMode(A0,INPUT);
   pixels.begin();
   pixels.clear();
-  for (int i = 0;i < 16;i++) {
+  for (int i = 0;i < 15;i++) {
    pixels.setPixelColor(i, pixels.Color(128, 128, 128)); // 0番目の色を変える
   }
-  pixels.show();//*/
+  for(int i = 0;i < 5;i++)pixels.show();//*/
 }
 
 byte val;
@@ -64,22 +64,19 @@ void loop() {
       else digitalWrite(5,LOW);
       //*/PORTD = i<<2;
       val = analogRead(A0);
-      Serial.write(val);
-      /*
+      //Serial.write(val);
       if(line_val < air_th[i])air_flag++;
       else if(line_th[i] < line_val){
         line_flag++;
         line_x += unit_cos[i];
         line_y += unit_sin[i];
       }
-    }
 
     now_theta = (byte)(map(atan2(line_y,line_x)*TO_INT,-PI*TO_INT,PI*TO_INT,1,254));
 
     if(line_flag == 0)Serial.write(0);
     else if(air_flag > 5)Serial.write(255);
     else Serial.write(now_theta);
-   */ 
   }
 
 }

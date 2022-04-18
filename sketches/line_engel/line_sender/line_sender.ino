@@ -15,6 +15,7 @@ void loop() {
     Serial1.write(i);
     }//*/
 
+
     //Serial1.write(0);
   
   // 受信バッファに３バイト（ヘッダ＋int）以上のデータが着ているか確認

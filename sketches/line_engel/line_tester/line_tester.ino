@@ -41,7 +41,7 @@ void setup() {
   for (int i = 0;i < 15;i++) {
    pixels.setPixelColor(i, pixels.Color(128, 128, 128)); // 0番目の色を変える
   }
-  //for(int i = 0;i < 5;i++)pixels.show();//*/
+  for(int i = 0;i < 5;i++)pixels.show();//*/
 }
 
 int val;
