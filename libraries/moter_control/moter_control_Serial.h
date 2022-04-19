@@ -18,7 +18,7 @@ void moter_Serial_send(int a, int b, int c){
   String StringZ = "0";
   String String0 = "0";
 
-
+/*
   StringX = String(1);
   val = input[0];
   if (val < 0 && val >= -100)
@@ -52,7 +52,7 @@ void moter_Serial_send(int a, int b, int c){
     String0 = String("");
   }
   StringA = StringX + StringY + StringZ;
-
+*/
 
   StringX = String(2);
   val = input[1];
@@ -121,9 +121,9 @@ void moter_Serial_send(int a, int b, int c){
   }
   StringC = StringX + StringY + StringZ;
 
-/*
+
   StringX = String(4);
-  val = input[3];
+  val = input[0];
   if (val < 0 && val >= -100)
   {
     StringY = String('R');
@@ -154,9 +154,9 @@ void moter_Serial_send(int a, int b, int c){
   {
   }
   StringD = StringX + StringY + StringZ;
-*/
 
-  StringD = "4F000";
+
+  StringA = "1F000";
   Serial2.println(StringA + StringB + StringC + StringD);
 }
 
