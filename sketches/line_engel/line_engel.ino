@@ -44,12 +44,13 @@ void setup() {
   for(int i = 0;i < 5;i++)pixels.show();//*/
 }
 
-byte val;
+byte i;
 
 void loop() {
   while(true){
-    //for(byte i = 0;i < DEV_NUM;i++){
-    byte i = 15;
+    air_flag = 0;
+    line_flag = 0;
+    for(byte i = 0;i < DEV_NUM;i++){
       /*//デジタル2
       if(i & (1<<0))digitalWrite(2,HIGH);
       else digitalWrite(2,LOW);
@@ -63,19 +64,20 @@ void loop() {
       if(i & (1<<3))digitalWrite(5,HIGH);
       else digitalWrite(5,LOW);
       //*/PORTD = i<<2;
-      val = analogRead(A0);
+      line_val[i] = analogRead(A0);
       //Serial.write(val);
-      if(line_val < air_th[i])air_flag++;
-      else if(line_th[i] < line_val){
+      if(line_val[i] < air_th[i])air_flag++;
+      else if(line_th[i] < line_val[i]){
         line_flag++;
         line_x += unit_cos[i];
         line_y += unit_sin[i];
       }
+    }
 
     now_theta = (byte)(map(atan2(line_y,line_x)*TO_INT,-PI*TO_INT,PI*TO_INT,1,254));
 
-    if(line_flag == 0)Serial.write(0);
-    else if(air_flag > 5)Serial.write(255);
+    if(air_flag > 5)Serial.write(255);
+    else if(line_flag == 0)Serial.write(0);
     else Serial.write(now_theta);
   }
 
