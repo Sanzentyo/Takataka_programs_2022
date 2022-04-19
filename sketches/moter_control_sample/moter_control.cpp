@@ -84,7 +84,7 @@ void moter_control::moter_move(float theta, int V_str, int V_rol){
   Store_i2c(&moter_pow[3],M[0]);//モーターボードの1番の調子が悪いので4番を使っている
   Store_i2c(&moter_pow[1],M[1]);
   Store_i2c(&moter_pow[2],M[2]);
-  //デバック用
+  /*//デバック用
 
   Serial.println("-------------------------");
   Serial.print("theta:");
@@ -96,6 +96,7 @@ void moter_control::moter_move(float theta, int V_str, int V_rol){
   Serial.print("M[2]:");
   Serial.println(M[2]);
   Serial.println("-------------------------");
+  //*/
 
   
   Wire.beginTransmission(0x14>>1);
