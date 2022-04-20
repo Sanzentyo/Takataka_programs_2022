@@ -47,6 +47,7 @@ void setup() {
 int val;
 int i = 15;
 int temp;
+bool flag = false;
 
 void loop() {
   while(true){
@@ -64,6 +65,13 @@ void loop() {
 
   //Serial.println(i);
   }
+    if(flag){
+      flag = false;
+      digitalWrite(11,HIGH);
+    }else{
+      flag = true;
+      digitalWrite(11,LOW);  
+    }
       /*//デジタル2
       if(i & (1<<0))digitalWrite(2,HIGH);
       else digitalWrite(2,LOW);

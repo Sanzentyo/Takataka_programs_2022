@@ -67,7 +67,7 @@ void loop() {
       line_val[i] = analogRead(A0);
       //Serial.write(val);
       if(line_val[i] < air_th[i])air_flag++;
-      else if(line_th[i] < line_val[i]){
+      else if(LINE_TH < line_val[i]){
         line_flag++;
         line_x += unit_cos[i];
         line_y += unit_sin[i];
