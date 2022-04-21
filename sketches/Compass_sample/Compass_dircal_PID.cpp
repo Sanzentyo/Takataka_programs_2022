@@ -29,9 +29,9 @@ void Cal_dir::set_front_dir(float set_front_dir){
 };
 
 void Cal_dir::set_PID_par(float p,float i,float d,float t){
-  P_par = p;
-  I_par = i;
-  D_par = d;
+  P_par = p/PI*180;
+  I_par = i/PI*180;
+  D_par = d/PI*180;
   delta_T = t;
 }
 

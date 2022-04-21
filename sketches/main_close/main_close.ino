@@ -30,10 +30,10 @@
 
 //ハードウェア依存
 uint8_t IR_PIN[8] = {A1,A2,A3,A4,A5,A6,A7,A8};//ピンの番号
-float IR_IN[8] = {5*PI/4, 3*PI/2, 7*PI/4, 0, PI/4, PI/2, 3*PI/4, PI};//ピンの角度
+float IR_IN[8] = {PI, 3*PI/4, PI/2, PI/4, 0, 7*PI/4, 3*PI/2, 5*PI/4};//ピンの角度
 float IR_cor[8] = {1.07,1.11,1.03,1.00,1.14,1.00,1.14,1.10};
-float theta_M[3] = {0.0,4*PI/3,2*PI/3};//モーターの角度
-int power = 30;
+float theta_M[3] = {0,2*PI/3,4*PI/3};//モーターの角度
+int power = 50;
 
 //インスタンスの生成
 IR_sensor IR_sen(IR_PIN,IR_IN);
@@ -58,20 +58,30 @@ void setup() {
   Wire.begin();//i2c コンパス　モーター
   Wire.setClock(I2C_Clock);
   
-  //setup_compass(&Compass_ctrl,&Cal_dir);
+  setup_compass(&Compass_ctrl,&Cal_dir);
   Cal_dir.set_PID_par(0.64,0.2,0.1,0.004);
   
   Mctrl.SPI_setup();
-  Mctrl.set_MAX_POW(30);
+  Mctrl.set_MAX_POW(50);
   
   //setupTimer5();//linechecker
   //pinMode(START_PIN,INPUT);
   //button_stay();
 }
 
+long time;
+imu::Vector<3> euler;//絶対角度が入る
+
 void loop() {
   //Serial.println(Boal_RT.theta);
   bool flag = false;//line_check(&Mctrl,power);
+  
+  euler = Compass_ctrl.getVector(Adafruit_BNO055::VECTOR_EULER);//現在の絶対角度を取得
+  Mom_now = Cal_dir.Cal_Mom_P(euler.x()/180*PI);
+  Boal_RT = IR_sen.cal_RT();
+  //Serial.println(Mom_now);
+  Mctrl.MOVE(PI,0,40);
+  //delay(1000);
   
   if(flag){
     unit_dir = Compass_ctrl.getVector(Adafruit_BNO055::VECTOR_EULER).x()/180*PI;//現在の絶対角度を取得

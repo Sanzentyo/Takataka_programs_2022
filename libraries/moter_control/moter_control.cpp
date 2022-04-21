@@ -193,16 +193,21 @@ void moter_control::moter_move_SPI(float theta, int V_str, int V_rol){
   }else{
     max_per = MAX_POW/max_ele_abs(M,3);
   }
+
+  byte send_data[3];//送信用
   
   for(int i = 0;i < 3;i++){
     M[i] *= max_per;
+    if(M[i] >= 0)send_data[i] = abs_temp(M[i]);
+    else send_data[i] = abs_temp(M[i]) + MINUS;
+    //Serial.print(i);Serial.print(":");Serial.println(send_data[i]);delay(500);
   }
 
   
 
   //M0,M1,M2までそれぞれSSピンはD5(PE3),D7(PH4),D9(PH6)に対応する
   //https://ht-deko.com/arduino/portregisters.html
-  byte send_data;//送信用
+
 
   //M0 D5 PE3
   // 3. 現在の設定を退避し、指定した設定をマイコンに反映させSPI通信を開始する
@@ -217,9 +222,7 @@ void moter_control::moter_move_SPI(float theta, int V_str, int V_rol){
   else SPI.transfer(POSI_DATA);*/
   
   //powerに該当するdataを送る
-  if(M[0] >= 0)send_data = M[0];
-  else send_data = -M[0] + MINUS;
-  SPI.transfer(send_data);
+  SPI.transfer(send_data[0]);
 
   // 6. 制御するデバイスに通信の終了を通知する
   PORTE |= 0b00001000; // bit3だけHighにする
@@ -229,16 +232,12 @@ void moter_control::moter_move_SPI(float theta, int V_str, int V_rol){
 
   //M1 D7 PH4
   PORTH &= ~0b00010000; // bit4だけLowにする
-  if(M[1] >= 0)send_data = M[1];
-  else send_data = -M[1] + MINUS;
-  SPI.transfer(send_data);
+  SPI.transfer(send_data[1]);
   PORTH |= 0b00010000; // bit4だけHighにする
 
   //M2 D9 PH6
   PORTH &= ~0b01000000; // bit6だけLowにする
-  if(M[2] >= 0)send_data = M[2];
-  else send_data = -M[2] + MINUS;
-  SPI.transfer(send_data);
+  SPI.transfer(send_data[2]);
   PORTH |= 0b01000000; // bit6だけHighにする
   
 }

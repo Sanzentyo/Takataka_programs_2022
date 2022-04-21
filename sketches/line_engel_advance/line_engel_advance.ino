@@ -19,8 +19,7 @@ int unit_index[DEV_NUM] = {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15};
 int S[4] = {2,3,4,5};
 
 int line_val[DEV_NUM];
-int line_x;
-int line_y;
+int64_t line_x,line_y,radius;
 byte now_theta;
 //short air_flag = 0;
 short line_flag = 0;
@@ -50,16 +49,14 @@ void setup() {
    pixels.setPixelColor(i, pixels.Color(128, 128, 128)); // 0番目の色を変える
   }
   for(int i = 0;i < 5;i++)pixels.show();//*/
+  
   for(int i = 0;i < MA_TIME;i++)for(int j = 0;j < 16;j++){
     PORTD = j<<2;
     ma[j].updateData(analogRead(A0)); 
   }
-}}
-
-[
+}
 
 void loop() {
-  
   while(true){
     //air_flag = 0;
     line_flag = 0;
@@ -77,20 +74,16 @@ void loop() {
       if(i & (1<<3))digitalWrite(5,HIGH);
       else digitalWrite(5,LOW);
       //*/PORTD = i<<2;
-      //line_val[i] = analogRead(A0);
-      //Serial.write(val);
-      /*if(line_val[i] < air_th[i])air_flag++;
-      else*/ if(LINE_TH < ma[i].updateData(analogRead(A0))){
-        line_flag++;
-        line_x += unit_cos[i];
-        line_y += unit_sin[i];
-      }
+      line_val[i] = ma[i].updateData(analogRead(A0));
+      line_x += line_val[i]*unit_cos[i];
+      line_y += line_val[i]*unit_sin[i];
     }
 
+    radius = sqrt(pow(line_x, 2.0) + pow(line_y, 2.0));
     now_theta = (byte)(map(atan2(line_y,line_x)*TO_INT,-PI*TO_INT,PI*TO_INT,1,254));
 
     /*if(air_flag > 5)Serial.write(255);
-    else */if(line_flag == 0)Serial.write(0);
+    else */if(radius < LINE_TH)Serial.write(0);
     else Serial.write(now_theta);
   }
 

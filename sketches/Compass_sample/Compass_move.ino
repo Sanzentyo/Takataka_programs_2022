@@ -30,6 +30,8 @@
 
 #define TEMP_NOW 25
 
+#define MOVE moter_move_SPI
+
 
 //ハードウェア依存
 uint8_t IR_PIN[8] = {A1,A2,A3,A4,A5,A6,A7,A8};//ピンの番号
@@ -81,11 +83,12 @@ void loop() {
     }
 
   euler = Compass_ctrl.getVector(Adafruit_BNO055::VECTOR_EULER);//現在の絶対角度を取得
-  Mom_now = Cal_dir.Cal_Mom_PID(euler.x()/180*PI);
-  Boal_RT = IR_sen.cal_RT();
+  Mom_now = Cal_dir.Cal_Mom_P(euler.x()/180*PI);
+  Serial.println(Mom_now);
+  //Boal_RT = IR_sen.cal_RT();
   //Serial.println(Mom_now);
   //Serial.println(Boal_RT.radius);
-  Mctrl.moter_move(Boal_RT.theta,100,Mom_now);
+  //Mctrl.MOVE(Boal_RT.theta,100,Mom_now);
 
   //delay(1000);
 }

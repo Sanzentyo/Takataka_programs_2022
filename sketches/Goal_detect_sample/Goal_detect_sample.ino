@@ -15,6 +15,7 @@
 #include <moter_control.h>
 #include <moving_average.h>
 #include <Ultrasonic.h>
+//#include <Goal_detect.h>
 
 
 //定数
@@ -46,11 +47,11 @@ Cal_dir Cal_dir(0);
 Ultrasonic Ultrasonic_a(TEMP_NOW,ECHO_PIN_a,TRIG_PIN_a);
 Ultrasonic Ultrasonic_b(TEMP_NOW,ECHO_PIN_b,TRIG_PIN_b);
 Ultrasonic Ultrasonic_c(TEMP_NOW,ECHO_PIN_c,TRIG_PIN_c);
-Goal_detecter a(1,2);
+//Goal_detecter a(1,2);
 
 
 void setup() {
-    Serial.begin(9600);
+    Serial.begin(115200);
 }
 
 float a,st;

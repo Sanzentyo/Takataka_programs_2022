@@ -1,0 +1,13 @@
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+Goal_detecter	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+set_field	KEYWORD2
+set_Sonics	KEYWORD2
+detect	KEYWORD2

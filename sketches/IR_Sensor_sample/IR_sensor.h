@@ -5,7 +5,7 @@
 #include "Arduino.h"
 #include <math.h>
 #define IR_NUM 8 //IRセンサーの数
-#define IR_CUR_MAX 1030//通常時の電圧
+#define IR_CUR_MAX 1023//通常時の電圧
 
 typedef struct {
     int active_num;      // 反応したセンサの個数
