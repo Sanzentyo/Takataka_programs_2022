@@ -21,13 +21,13 @@
 //定数
 #define START_PIN 11
 
-#define ECHO_PIN_a 48
-#define ECHO_PIN_b 44
-#define ECHO_PIN_c 40
+#define ECHO_PIN_a 12
+#define ECHO_PIN_b 10
+#define ECHO_PIN_c 14
 
-#define TRIG_PIN_a 46
-#define TRIG_PIN_b 42
-#define TRIG_PIN_c 38
+#define TRIG_PIN_a 13
+#define TRIG_PIN_b 11
+#define TRIG_PIN_c 15
 
 #define TEMP_NOW 25
 

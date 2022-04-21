@@ -1,26 +1,32 @@
 #include "Ultrasonic.h"
 
-const float temp = 25;
-const int echo_pins[3] = {48,44,40};
-const int trig_pins[3] = {46,42,36};
+#define ECHO_PIN_a 14
+#define ECHO_PIN_b 10
+#define ECHO_PIN_c 12
 
-Ultrasonic Sonic_uno(temp,9,8);
-//Ultrasonic Sonic0(temp,echo_pins[0],trig_pins[0]);
-//Ultrasonic Sonic1(temp,echo_pins[1],trig_pins[1]);
-//Ultrasonic Sonic2(temp,echo_pins[2],trig_pins[2]);
+#define TRIG_PIN_a 15
+#define TRIG_PIN_b 11
+#define TRIG_PIN_c 13
+
+#define TEMP_NOW 25
+
+//Ultrasonic Sonic_uno(temp,9,8);
+Ultrasonic Ultrasonic_a(TEMP_NOW,ECHO_PIN_a,TRIG_PIN_a);
+Ultrasonic Ultrasonic_b(TEMP_NOW,ECHO_PIN_b,TRIG_PIN_b);
+Ultrasonic Ultrasonic_c(TEMP_NOW,ECHO_PIN_c,TRIG_PIN_c);
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);
 }
 
 void loop() {
   float a = micros();
-  Sonic_uno.measure();
+  //Sonic_uno.measure();
   //for(int i = 0;i < 100;i++){if((i%2)==0)digitalWrite(2,LOW);else digitalWrite(2,HIGH);} 
-  //Serial.print("Sonic0:");Serial.println(Sonic0.measure());
-  //Serial.print("Sonic1:");Serial.println(Sonic1.measure());
-  //Serial.print("Sonic2:");Serial.println(Sonic2.measure());
+  Serial.print("Sonic_a:");Serial.println(Ultrasonic_a.measure());
+  Serial.print("Sonic_b:");Serial.println(Ultrasonic_b.measure());
+  Serial.print("Sonic_c:");Serial.println(Ultrasonic_c.measure());
   Serial.println((micros()-a));
   Serial.println("------------------------");
-  //delay(500);
+  delay(500);
 }

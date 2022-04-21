@@ -32,8 +32,9 @@
 uint8_t IR_PIN[8] = {A1,A2,A3,A4,A5,A6,A7,A8};//ピンの番号
 float IR_IN[8] = {PI, 3*PI/4, PI/2, PI/4, 0, 7*PI/4, 3*PI/2, 5*PI/4};//ピンの角度
 float IR_cor[8] = {1.07,1.11,1.03,1.00,1.14,1.00,1.14,1.10};
-float theta_M[3] = {0,2*PI/3,4*PI/3};//モーターの角度
-int power = 50;
+//float theta_M[3] = {0,2*PI/3,4*PI/3};//モーターの角度
+float theta_M[3] = {PI,-PI/3,PI/3};//モーターの角度 SPI
+int power = 0;
 
 //インスタンスの生成
 IR_sensor IR_sen(IR_PIN,IR_IN);
@@ -52,7 +53,7 @@ void setup() {
   Serial.begin(115200);//デバック
   Serial1.begin(115200);//ラインセンサー
   
-  IR_sen.set_cor(IR_cor);
+  //IR_sen.set_cor(IR_cor);
   IR_sen.set_radius(UNIT_RADIUS,BOAL_RADIUS,MAX_R);
   
   Wire.begin();//i2c コンパス　モーター
@@ -62,7 +63,7 @@ void setup() {
   Cal_dir.set_PID_par(0.64,0.2,0.1,0.004);
   
   Mctrl.SPI_setup();
-  Mctrl.set_MAX_POW(50);
+  Mctrl.set_MAX_POW(70);
   
   //setupTimer5();//linechecker
   //pinMode(START_PIN,INPUT);
@@ -75,13 +76,14 @@ imu::Vector<3> euler;//絶対角度が入る
 void loop() {
   //Serial.println(Boal_RT.theta);
   bool flag = false;//line_check(&Mctrl,power);
-  
+
+  line_check();
   euler = Compass_ctrl.getVector(Adafruit_BNO055::VECTOR_EULER);//現在の絶対角度を取得
-  Mom_now = Cal_dir.Cal_Mom_P(euler.x()/180*PI);
+  Mom_now = 0;//Cal_dir.Cal_Mom_P(euler.x()/180*PI);
   Boal_RT = IR_sen.cal_RT();
-  //Serial.println(Mom_now);
-  Mctrl.MOVE(PI,0,40);
-  //delay(1000);
+  //Serial.println(Boal_RT.theta/PI*180);
+  Mctrl.MOVE(Boal_RT.theta,power,-Mom_now);
+  //delay(50);
   
   if(flag){
     unit_dir = Compass_ctrl.getVector(Adafruit_BNO055::VECTOR_EULER).x()/180*PI;//現在の絶対角度を取得
@@ -156,35 +158,70 @@ void setupTimer5() {
   interrupts();
 }
 
+byte dir;
+
 ISR(TIMER5_COMPA_vect){
   noInterrupts();//割り込み停止
-  //Serial.println("Yo");
-  line_check();
-  interrupts();//割り込み開始
-}
-
-void line_check(){
-  byte dir = 0;
+  Serial.println("Yo");
+  dir = 0;
+  Serial.println("hey");
   
   while(Serial1.available() > 0){
     dir = Serial1.read();
   }
 
-  if(dir == 0){
+  if(dir == 0 | dir == 8){
     return;
-  }else if(dir == 255){
+  }/*else if(dir == 255){
     unit_dir = Compass_ctrl.getVector(Adafruit_BNO055::VECTOR_EULER).x()/180*PI;//現在の絶対角度を取得
     Mom_now = Cal_dir.Cal_Mom_P(unit_dir);
     Mctrl.MOVE(0,0,Mom_now);
     delayMicroseconds(100);
     line_check();
     return;
-  }else{
+  }*/else{
     float esc_theta = map(dir,1,254,-180,180)/180*PI;
+    //unit_dir = Compass_ctrl.getVector(Adafruit_BNO055::VECTOR_EULER).x()/180*PI;//現在の絶対角度を取得
+    //Mom_now = Cal_dir.Cal_Mom_P(unit_dir);
+    Mctrl.moter_move(esc_theta,power,0);
+    delayMicroseconds(100);
+    Serial.println("hey");
+    line_check();
+    return;
+  }
+
+  
+  interrupts();//割り込み開始
+}
+
+void hello(){
+  Serial.println(500);
+}
+
+void line_check(){
+  byte dir = 0;
+  //Serial.println("hey");
+  
+  while(Serial1.available() > 0){
+    dir = Serial1.read();
+  }
+
+  if(dir == 0 | dir == 8){
+    return;
+  }/*else if(dir == 255){
     unit_dir = Compass_ctrl.getVector(Adafruit_BNO055::VECTOR_EULER).x()/180*PI;//現在の絶対角度を取得
     Mom_now = Cal_dir.Cal_Mom_P(unit_dir);
-    Mctrl.moter_move(esc_theta,power,Mom_now);
+    Mctrl.MOVE(0,0,Mom_now);
     delayMicroseconds(100);
+    line_check();
+    return;
+  }*/else{
+    //float esc_theta = map(dir,1,254,-180,180)/180*PI;
+    //unit_dir = Compass_ctrl.getVector(Adafruit_BNO055::VECTOR_EULER).x()/180*PI;//現在の絶対角度を取得
+    //Mom_now = Cal_dir.Cal_Mom_P(unit_dir);
+    //Mctrl.moter_move(esc_theta,power,0);
+    delayMicroseconds(100);
+    Serial.println(dir);
     line_check();
     return;
   }

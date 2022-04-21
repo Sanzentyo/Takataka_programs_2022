@@ -19,7 +19,7 @@ int unit_index[DEV_NUM] = {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15};
 int S[4] = {2,3,4,5};
 
 int line_val[DEV_NUM];
-int64_t line_x,line_y,radius;
+long line_x,line_y,radius;
 byte now_theta;
 //short air_flag = 0;
 short line_flag = 0;
@@ -60,6 +60,8 @@ void loop() {
   while(true){
     //air_flag = 0;
     line_flag = 0;
+    line_x = 0;
+    line_y = 0;
     for(byte i = 0;i < DEV_NUM;i++){
       /*//デジタル2
       if(i & (1<<0))digitalWrite(2,HIGH);
@@ -82,11 +84,22 @@ void loop() {
     radius = sqrt(pow(line_x, 2.0) + pow(line_y, 2.0));
     now_theta = (byte)(map(atan2(line_y,line_x)*TO_INT,-PI*TO_INT,PI*TO_INT,1,254));
 
-    /*if(air_flag > 5)Serial.write(255);
-    else */if(radius < LINE_TH)Serial.write(0);
-    else Serial.write(now_theta);
+    sendIntData(radius);
+    delay(500);
+
+    //Serial.println(radius);
+    
+    /*
+    if(radius < LINE_TH)Serial.write(0);
+    else Serial.write(now_theta);*/
   }
 
+}
+
+void sendIntData(int value) {
+  Serial.write('H'); // ヘッダの送信
+  Serial.write(lowByte(value)); // 下位バイトの送信
+  Serial.write(highByte(value)); // 上位バイトの送信
 }
 /*
 int update_line_vals(short j){

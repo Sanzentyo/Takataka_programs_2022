@@ -4,7 +4,7 @@ void setup() {
 
 }
 
-int recv_data,i,temp;
+unsigned int recv_data,i,temp;
 
 void loop() {
     while(Serial.available() > 0){

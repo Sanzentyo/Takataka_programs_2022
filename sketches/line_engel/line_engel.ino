@@ -6,11 +6,11 @@
 #define DEV_NUM 16
 #define TO_INT 1000
 #define AIR_TH 100
-#define LINE_TH 450
+#define LINE_TH 550
 #define BRIGHTNESS (255) // 0-255
 #define MA_TIME 10
 
-float unit_theta[DEV_NUM] = {9*PI/16,11*PI/16,13*PI/16,15*PI/16,17*PI/16,19*PI/16,21*PI/16,23*PI/16,25*PI/16,27*PI/16,29*PI/16,31*PI/16,PI/16,3*PI/16,5*PI/16,7*PI/16};
+float unit_theta[DEV_NUM] = {25*PI/16,27*PI/16,29*PI/16,31*PI/16,PI/16,3*PI/16,5*PI/16,7*PI/16,9*PI/16,11*PI/16,13*PI/16,15*PI/16,17*PI/16,19*PI/16,21*PI/16,23*PI/16};
 int unit_cos[DEV_NUM];
 int unit_sin[DEV_NUM];
 //int air_th[DEV_NUM] = {100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100};
@@ -54,15 +54,16 @@ void setup() {
     PORTD = j<<2;
     ma[j].updateData(analogRead(A0)); 
   }
-}}
+}
 
-[
 
 void loop() {
   
   while(true){
     //air_flag = 0;
     line_flag = 0;
+    line_x = 0;
+    line_y = 0;
     for(byte i = 0;i < DEV_NUM;i++){
       /*//デジタル2
       if(i & (1<<0))digitalWrite(2,HIGH);
@@ -80,7 +81,7 @@ void loop() {
       //line_val[i] = analogRead(A0);
       //Serial.write(val);
       /*if(line_val[i] < air_th[i])air_flag++;
-      else*/ if(LINE_TH < ma[i].updateData(analogRead(A0))){
+      else*/ if(LINE_TH < /*ma[i].updateData(*/analogRead(A0)){
         line_flag++;
         line_x += unit_cos[i];
         line_y += unit_sin[i];
