@@ -46,9 +46,9 @@ void setup() {
   pixels.begin();
   pixels.clear();
   for (int i = 0;i < 15;i++) {
-   pixels.setBrightness(BRIGHTNESS);
-   pixels.setPixelColor(i, pixels.Color(128, 128, 128)); // 0番目の色を変える
+   pixels.setPixelColor(i, pixels.Color(255, 255, 255)); // 0番目の色を変える
   }
+  pixels.setBrightness(BRIGHTNESS);
   for(int i = 0;i < 5;i++)pixels.show();//*/
   for(int i = 0;i < MA_TIME;i++)for(int j = 0;j < 16;j++){
     PORTD = j<<2;
@@ -91,7 +91,7 @@ void loop() {
     now_theta = (byte)(map(atan2(line_y,line_x)*TO_INT,-PI*TO_INT,PI*TO_INT,1,254));
 
     /*if(air_flag > 5)Serial.write(255);
-    else */if(line_flag == 0)Serial.write(0);
+    else */if(line_flag < 2)Serial.write(0);
     else Serial.write(now_theta);
   }
 

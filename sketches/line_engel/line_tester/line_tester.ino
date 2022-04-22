@@ -6,6 +6,7 @@
 #define TO_INT 1000
 #define AIR_TH 100
 #define LINE_TH 400
+#define BRIGHTNESS (255) // 0-255
 
 float unit_theta[DEV_NUM] = {0,PI/8,PI/4,3*PI/8,PI/2,5*PI/8,3*PI/4,7*PI/8,PI,9*PI/8,5*PI/4,11*PI/8,3*PI/4,13*PI/8,7*PI/4,15*PI/8};
 int unit_cos[DEV_NUM];
@@ -39,8 +40,9 @@ void setup() {
   pixels.begin();
   pixels.clear();
   for (int i = 0;i < 15;i++) {
-   pixels.setPixelColor(i, pixels.Color(128, 128, 128)); // 0番目の色を変える
+   pixels.setPixelColor(i, pixels.Color(255, 255, 255)); // 0番目の色を変える
   }
+  pixels.setBrightness(BRIGHTNESS);
   for(int i = 0;i < 5;i++)pixels.show();//*/
 }
 

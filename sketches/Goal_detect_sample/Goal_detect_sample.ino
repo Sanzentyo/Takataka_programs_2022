@@ -47,8 +47,10 @@ Cal_dir Cal_dir(0);
 Ultrasonic Ultrasonic_a(TEMP_NOW,ECHO_PIN_a,TRIG_PIN_a);
 Ultrasonic Ultrasonic_b(TEMP_NOW,ECHO_PIN_b,TRIG_PIN_b);
 Ultrasonic Ultrasonic_c(TEMP_NOW,ECHO_PIN_c,TRIG_PIN_c);
-//Goal_detecter a(1,2);
-
+//Goal_detecter a(193,66);
+//ロボ自体　直径17
+//weight 132cm  1/2= 66cm -robo= 49cm
+//hegiht 193cm            -robo= 176cm
 
 void setup() {
     Serial.begin(115200);
