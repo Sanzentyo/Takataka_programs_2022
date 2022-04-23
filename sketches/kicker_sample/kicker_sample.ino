@@ -1,6 +1,7 @@
 #define K_PIN 3
-#define FT_PIN A0
-#define LED_PIN 6
+#define FT_PIN A9
+#define TH_VAL 600
+#define DELAY_TIME 750
 
 void setup() {
   Serial.begin(9600);
@@ -8,9 +9,6 @@ void setup() {
   pinMode(K_PIN,OUTPUT);
   //FT_PIN = フォトトランジスタにつなぐピン
   pinMode(FT_PIN,INPUT);
-  //LED_PIN = LEDにつなぐピン
-  pinMode(LED_PIN,OUTPUT);
-  digitalWrite(LED_PIN,HIGH);
 }
 
 double analogValue;

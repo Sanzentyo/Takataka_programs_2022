@@ -15,6 +15,7 @@
 #include <moving_average.h>
 #include <Ultrasonic.h>
 #include <Goal_detect.h>
+#include <kicker.h>
 
 //定数
 #define START_PIN 11
@@ -33,6 +34,11 @@
 #define TRIG_PIN_a 13
 #define TRIG_PIN_b 11
 #define TRIG_PIN_c 15
+
+#define K_PIN 3
+#define FT_PIN A9
+#define TH_VAL 600
+#define DELAY_TIME 750
 
 #define TEMP_NOW 23
 
@@ -57,6 +63,7 @@ Ultrasonic Ultrasonic_a(TEMP_NOW,ECHO_PIN_a,TRIG_PIN_a);
 Ultrasonic Ultrasonic_b(TEMP_NOW,ECHO_PIN_b,TRIG_PIN_b);
 Ultrasonic Ultrasonic_c(TEMP_NOW,ECHO_PIN_c,TRIG_PIN_c);
 Goal_detecter detecter(176,49); //(height,wighth)
+kicker kicker(K_PIN,FT_PIN,TH_VAL,DELAY_TIME);
 
 
 //グローバル変数
@@ -97,6 +104,8 @@ void loop() {
   euler = Compass_ctrl.getVector(Adafruit_BNO055::VECTOR_EULER);//現在の絶対角度を取得
   Mom_now = Cal_dir.Cal_Mom_P(euler.x()/180*PI);
   Boal_RT = IR_sen.cal_RT();
+  //if(kicker.scan())kicker.kick();
+  Serial.println(kicker.scan_int());
   //Serial.println(Boal_RT.theta/PI*180);
   //Mctrl.MOVE(Boal_RT.theta,power,-Mom_now);
   //delay(50);
@@ -132,15 +141,15 @@ void loop() {
     }
     /*else if(now_radius < MAX_R*0.9){
       round_theta = IR_sen.cal_close(Boal_RT.theta,now_radius);
-      Mctrl.moter_move(round_theta,power,Mom_now);
-    }else{//Mctrl.moter_move(round_theta,0,Mom_now);
-      if(-PI <= Boal_RT.theta && Boal_RT.theta <= -7*PI/12)Mctrl.moter_move(-PI/2,power,Mom_now);
-      else if(-7*PI/12 < Boal_RT.theta && Boal_RT.theta <= -PI/2)Mctrl.moter_move(0,power,Mom_now);
-      else if(-PI/2 < Boal_RT.theta && Boal_RT.theta <= -5*PI/12)Mctrl.moter_move(PI,power,Mom_now);
-      else if(-5*PI/12 < Boal_RT.theta && Boal_RT.theta <= 0)Mctrl.moter_move(-PI/2,power,Mom_now);
-      else if(0 < Boal_RT.theta && Boal_RT.theta <= PI/6)Mctrl.moter_move(Boal_RT.theta-PI/6,power,Mom_now);
-      else if(PI/6 < Boal_RT.theta && Boal_RT.theta <= 5*PI/6)Mctrl.moter_move(Boal_RT.theta,power,Mom_now); 
-      else if(5*PI/6 < Boal_RT.theta && Boal_RT.theta <= PI)Mctrl.moter_move(Boal_RT.theta+PI/6,power,Mom_now);
+      Mctrl.MOVE(round_theta,power,Mom_now);
+    }else{//Mctrl.MOVE(round_theta,0,Mom_now);
+      if(-PI <= Boal_RT.theta && Boal_RT.theta <= -7*PI/12)Mctrl.MOVE(-PI/2,power,Mom_now);
+      else if(-7*PI/12 < Boal_RT.theta && Boal_RT.theta <= -PI/2)Mctrl.MOVE(0,power,Mom_now);
+      else if(-PI/2 < Boal_RT.theta && Boal_RT.theta <= -5*PI/12)Mctrl.MOVE(PI,power,Mom_now);
+      else if(-5*PI/12 < Boal_RT.theta && Boal_RT.theta <= 0)Mctrl.MOVE(-PI/2,power,Mom_now);
+      else if(0 < Boal_RT.theta && Boal_RT.theta <= PI/6)Mctrl.MOVE(Boal_RT.theta-PI/6,power,Mom_now);
+      else if(PI/6 < Boal_RT.theta && Boal_RT.theta <= 5*PI/6)Mctrl.MOVE(Boal_RT.theta,power,Mom_now); 
+      else if(5*PI/6 < Boal_RT.theta && Boal_RT.theta <= PI)Mctrl.MOVE(Boal_RT.theta+PI/6,power,Mom_now);
     }*/
   }
 }

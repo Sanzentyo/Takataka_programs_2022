@@ -9,4 +9,5 @@ kicker	KEYWORD1
 #######################################
 
 scan	KEYWORD2
+scan_int	KEYWORD2
 kick	KEYWORD2
