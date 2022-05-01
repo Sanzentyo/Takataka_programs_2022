@@ -20,13 +20,13 @@ void setup() {
 }
 
 void loop() {
-  float a = micros();
+  //float a = micros();
   //Sonic_uno.measure();
   //for(int i = 0;i < 100;i++){if((i%2)==0)digitalWrite(2,LOW);else digitalWrite(2,HIGH);} 
   Serial.print("Sonic_a:");Serial.println(Ultrasonic_a.measure());
   Serial.print("Sonic_b:");Serial.println(Ultrasonic_b.measure());
   Serial.print("Sonic_c:");Serial.println(Ultrasonic_c.measure());
-  Serial.println((micros()-a));
+  //Serial.println((micros()-a));
   Serial.println("------------------------");
   delay(500);
 }

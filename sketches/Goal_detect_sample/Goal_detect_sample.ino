@@ -15,7 +15,7 @@
 #include <moter_control.h>
 #include <moving_average.h>
 #include <Ultrasonic.h>
-//#include <Goal_detect.h>
+#include "Goal_detect.h"
 
 
 //定数
@@ -47,21 +47,19 @@ Cal_dir Cal_dir(0);
 Ultrasonic Ultrasonic_a(TEMP_NOW,ECHO_PIN_a,TRIG_PIN_a);
 Ultrasonic Ultrasonic_b(TEMP_NOW,ECHO_PIN_b,TRIG_PIN_b);
 Ultrasonic Ultrasonic_c(TEMP_NOW,ECHO_PIN_c,TRIG_PIN_c);
-//Goal_detecter a(193,66);
+Goal_detecter detecter(170,80);
 //ロボ自体　直径17
 //weight 132cm  1/2= 66cm -robo= 49cm
 //hegiht 193cm            -robo= 176cm
 
 void setup() {
     Serial.begin(115200);
+    detecter.set_Sonics(&Ultrasonic_a,&Ultrasonic_b,&Ultrasonic_c);
 }
-
-float a,st;
-vectorRT_t now_RT;
 
 void loop() {
   //a = millis();
-  Serial.print(Ultrasonic_a.measure());
+  Serial.println(detecter.detect(0)*180/PI);
   /*st = millis()-a;
   Serial.print(",");
   Serial.println(st);

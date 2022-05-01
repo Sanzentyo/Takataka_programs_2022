@@ -35,9 +35,9 @@ float Goal_detecter::detect(float now_diff){
   float b = b_p->measure();
   float c = c_p->measure();
   if(a < c){
-    return atan2(field_height-b*now_cos, field_width-a*now_cos);
+    return atan2(field_height-b*now_cos, field_width-c*now_cos);
   }else{
-    return atan2(field_height-b*now_cos, -(field_width-c*now_cos));
+    return atan2(field_height-b*now_cos, -(field_width-a*now_cos));
   }
 
   return -1;

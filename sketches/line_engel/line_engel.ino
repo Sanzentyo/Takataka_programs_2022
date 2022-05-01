@@ -82,16 +82,17 @@ void loop() {
       //Serial.write(val);
       /*if(line_val[i] < air_th[i])air_flag++;
       else*/ if(LINE_TH < /*ma[i].updateData(*/analogRead(A0)){
+        if (i != 2) {
         line_flag++;
         line_x += unit_cos[i];
         line_y += unit_sin[i];
+        }
       }
     }
 
     now_theta = (byte)(map(atan2(line_y,line_x)*TO_INT,-PI*TO_INT,PI*TO_INT,1,254));
 
-    /*if(air_flag > 5)Serial.write(255);
-    else */if(line_flag < 2)Serial.write(0);
+    if(line_flag < 1)Serial.write(0);
     else Serial.write(now_theta);
   }
 

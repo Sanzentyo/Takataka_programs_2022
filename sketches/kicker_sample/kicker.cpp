@@ -11,6 +11,7 @@ kicker::kicker(int k_pin,int ft_pin,int th_val,int delay_time){
 void kicker::setup(){
   //K_PIN = キッカーを動作させる用のピン
   pinMode(K_PIN,OUTPUT);
+  digitalWrite(K_PIN,LOW);
   //FT_PIN = フォトトランジスタにつなぐピン
   pinMode(FT_PIN,INPUT);
 }

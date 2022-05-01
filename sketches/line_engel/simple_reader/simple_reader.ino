@@ -18,6 +18,6 @@ void loop() {
     esc_theta = map(dir,1,254,-180,180);
   }
   Serial.println(esc_theta);//*/
-  //delay(500);
+  delay(500);
 
 }

@@ -16,7 +16,7 @@ void kicker::setup(){
 }
 
 bool kicker::scan(){
-  return analogRead(FT_PIN) >= TH_VAL;
+  return analogRead(FT_PIN) <= TH_VAL;
 }
 
 int kicker::scan_int(){

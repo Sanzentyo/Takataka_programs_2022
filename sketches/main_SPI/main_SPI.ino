@@ -1,4 +1,4 @@
-//標準ライブラリ
+;//標準ライブラリ
 #include <Wire.h>
 #include <math.h>
 
@@ -18,7 +18,7 @@
 #include <kicker.h>
 
 //定数
-#define START_PIN 11
+#define START_PIN 2
 #define ECHO_PIN 48
 #define TRIG_PIN 46
 #define I2C_Clock 400000
@@ -37,7 +37,7 @@
 
 #define K_PIN 3
 #define FT_PIN A9
-#define TH_VAL 600
+#define TH_VAL 25
 #define DELAY_TIME 750
 
 #define TEMP_NOW 23
@@ -51,7 +51,7 @@ float IR_IN[8] = {PI, 3*PI/4, PI/2, PI/4, 0, 7*PI/4, 3*PI/2, 5*PI/4};//ピンの
 float IR_cor[8] = {1.07,1.11,1.03,1.00,1.14,1.00,1.14,1.10};
 //float theta_M[3] = {0,2*PI/3,4*PI/3};//モーターの角度
 float theta_M[3] = {PI,-PI/3,PI/3};//モーターの角度 SPI
-int power = 0, line_power = 50;
+int power = 80, line_power = 70;
 
 //インスタンスの生成
 IR_sensor IR_sen(IR_PIN,IR_IN);
@@ -68,7 +68,7 @@ kicker kicker(K_PIN,FT_PIN,TH_VAL,DELAY_TIME);
 
 //グローバル変数
 vectorRT_t Boal_RT;
-float now_radius,now_theta,round_theta,G_dir = PI/2,unit_dir;
+float now_radius,now_theta,round_theta,front_dir,G_dir = PI/2,unit_dir;
 int Mom_now;
 
 void setup() {
@@ -81,17 +81,21 @@ void setup() {
   Wire.begin();//i2c コンパス　モーター
   Wire.setClock(I2C_Clock);
   
-  setup_compass(&Compass_ctrl,&Cal_dir);
-  Cal_dir.set_PID_par(0.64,0.2,0.1,0.004);
-
   detecter.set_Sonics(&Ultrasonic_a,&Ultrasonic_b,&Ultrasonic_c);
   
   Mctrl.SPI_setup();
-  Mctrl.set_MAX_POW(70);
+  Mctrl.set_MAX_POW(100);
+
+  //Mctrl.STOP();
   
   //setupTimer5();//linechecker
-  //pinMode(START_PIN,INPUT);
-  //button_stay();
+  pinMode(START_PIN,INPUT);
+  button_stay();
+
+  setup_compass(&Compass_ctrl,&Cal_dir);
+  Cal_dir.set_PID_par(0.50,0.2,0.1,0.004);
+
+  delay(100);
 }
 
 long time;
@@ -100,26 +104,29 @@ imu::Vector<3> euler;//絶対角度が入る
 void loop() {
   //Serial.println(Boal_RT.theta);
   bool flag = line_check();
-  if(flag){
+  if(false){
   euler = Compass_ctrl.getVector(Adafruit_BNO055::VECTOR_EULER);//現在の絶対角度を取得
-  Mom_now = Cal_dir.Cal_Mom_P(euler.x()/180*PI);
+  Mom_now = Cal_dir.Cal_Mom_P(euler.x()*PI/180);
   Boal_RT = IR_sen.cal_RT();
-  //if(kicker.scan())kicker.kick();
-  Serial.println(kicker.scan_int());
-  //Serial.println(Boal_RT.theta/PI*180);
-  //Mctrl.MOVE(Boal_RT.theta,power,-Mom_now);
+  /*if(kicker.scan()){
+    Serial.println("kick");
+    kicker.kick();
+  }*/
+  //Serial.println(kicker.scan_int());
+  //Serial.println(Mom_now);
+  Mctrl.MOVE(PI/2,50,-Mom_now);
   //delay(50);
   }
   
-  if(false){
-    unit_dir = Compass_ctrl.getVector(Adafruit_BNO055::VECTOR_EULER).x()/180*PI;//現在の絶対角度を取得
-    Mom_now = 0;//Cal_dir.Cal_Mom_P(unit_dir);Cal_dir.Cal_Mom_P_target(unit_dir,G_dir);
+  if(flag){
+    euler = Compass_ctrl.getVector(Adafruit_BNO055::VECTOR_EULER);//現在の絶対角度を取得
+    Mom_now = Cal_dir.Cal_Mom_P(euler.x()*PI/180);
     Boal_RT = IR_sen.cal_RT();
     now_radius = ma_radius.updateData(Boal_RT.radius);
     //Serial.println(now_radius);
-    if(now_radius < 100 && false)Mctrl.MOVE(0,0,Mom_now);
-    else if(now_radius < 500 | true)Mctrl.MOVE(Boal_RT.theta,power,Mom_now);
-    else/* if(now_radius < MAX_R*0.9)*/{
+    if(now_radius < 10)Mctrl.MOVE(3*PI/2,40,-Mom_now);
+    else if(now_radius < 500)Mctrl.MOVE(Boal_RT.theta,power,-Mom_now);
+    /*else if(now_radius < MAX_R*0.9){
       float now_x = now_radius*cos(Boal_RT.theta);
       
       if((Boal_RT.theta < -2*PI/3) | (now_x < -IR_UNIT_RADIUS && Boal_RT.theta < 0)){
@@ -133,26 +140,40 @@ void loop() {
         round_theta = IR_sen.cal_close(Boal_RT.theta,now_radius);
         Mctrl.MOVE(round_theta,power,Mom_now);
       }else if((Boal_RT.theta < 5*PI/6) && (-IR_UNIT_RADIUS < now_x)){
-        Mctrl.MOVE(G_dir,power,Mom_now);
+        Mctrl.MOVE(PI/2,power,Mom_now);
       }else{
         round_theta = IR_sen.cal_close(Boal_RT.theta,now_radius);
         Mctrl.MOVE(round_theta,power,Mom_now);
       }
-    }
-    /*else if(now_radius < MAX_R*0.9){
-      round_theta = IR_sen.cal_close(Boal_RT.theta,now_radius);
-      Mctrl.MOVE(round_theta,power,Mom_now);
-    }else{//Mctrl.MOVE(round_theta,0,Mom_now);
-      if(-PI <= Boal_RT.theta && Boal_RT.theta <= -7*PI/12)Mctrl.MOVE(-PI/2,power,Mom_now);
-      else if(-7*PI/12 < Boal_RT.theta && Boal_RT.theta <= -PI/2)Mctrl.MOVE(0,power,Mom_now);
-      else if(-PI/2 < Boal_RT.theta && Boal_RT.theta <= -5*PI/12)Mctrl.MOVE(PI,power,Mom_now);
-      else if(-5*PI/12 < Boal_RT.theta && Boal_RT.theta <= 0)Mctrl.MOVE(-PI/2,power,Mom_now);
-      else if(0 < Boal_RT.theta && Boal_RT.theta <= PI/6)Mctrl.MOVE(Boal_RT.theta-PI/6,power,Mom_now);
-      else if(PI/6 < Boal_RT.theta && Boal_RT.theta <= 5*PI/6)Mctrl.MOVE(Boal_RT.theta,power,Mom_now); 
-      else if(5*PI/6 < Boal_RT.theta && Boal_RT.theta <= PI)Mctrl.MOVE(Boal_RT.theta+PI/6,power,Mom_now);
     }*/
+    /*else{//Mctrl.MOVE(round_theta,0,Mom_now);
+      float delta_dir = euler.x() - front_dir);
+      
+      if(delta_dir > PI)delta_dir += -2*PI;//ゴールへの角度を-180度から180度で表す
+      else if(delta_dir < -PI)delta_dir += 2*PI;
+      if(delta_dir > PI)delta_dir += -2*PI;//ゴールへの角度を-
+      detecter.detect(euler.x())
+      if(-PI <= Boal_RT.theta && Boal_RT.theta <= -7*PI/12)Mctrl.MOVE(-PI/2,power,-Mom_now);
+      else if(-7*PI/12 < Boal_RT.theta && Boal_RT.theta <= -PI/2)Mctrl.MOVE(0,power,-Mom_now);
+      else if(-PI/2 < Boal_RT.theta && Boal_RT.theta <= -5*PI/12)Mctrl.MOVE(PI,power,-Mom_now);
+      else if(-5*PI/12 < Boal_RT.theta && Boal_RT.theta <= 0)Mctrl.MOVE(-PI/2,power,-Mom_now);
+      else if(0 < Boal_RT.theta && Boal_RT.theta <= PI/6)Mctrl.MOVE(Boal_RT.theta-3*PI/12,power,-Mom_now);
+      else if(PI/6 < Boal_RT.theta && Boal_RT.theta <= 5*PI/6)Mctrl.MOVE(PI/2,power,-Mom_now); 
+      else if(5*PI/6 < Boal_RT.theta && Boal_RT.theta <= PI)Mctrl.MOVE(Boal_RT.theta+3*PI/12,power,-Mom_now);
+    }//*/
+    else{//Mctrl.MOVE(round_theta,0,Mom_now);
+      //detecter.detect(euler.x())
+      if(-PI <= Boal_RT.theta && Boal_RT.theta <= -7*PI/12)Mctrl.MOVE(-PI/2,power,-Mom_now);
+      else if(-7*PI/12 < Boal_RT.theta && Boal_RT.theta <= -PI/2)Mctrl.MOVE(0,power,-Mom_now);
+      else if(-PI/2 < Boal_RT.theta && Boal_RT.theta <= -5*PI/12)Mctrl.MOVE(PI,power,-Mom_now);
+      else if(-5*PI/12 < Boal_RT.theta && Boal_RT.theta <= 0)Mctrl.MOVE(-PI/2,power,-Mom_now);
+      else if(0 < Boal_RT.theta && Boal_RT.theta <= PI/6)Mctrl.MOVE(Boal_RT.theta-3*PI/12,power,-Mom_now);
+      else if(PI/6 < Boal_RT.theta && Boal_RT.theta <= 5*PI/6)Mctrl.MOVE(PI/2,power,-Mom_now); 
+      else if(5*PI/6 < Boal_RT.theta && Boal_RT.theta <= PI)Mctrl.MOVE(Boal_RT.theta+3*PI/12,power,-Mom_now);
+    }//*/
   }
 }
+
 
 void button_stay(){
   noInterrupts();//割り込み停止
@@ -169,6 +190,7 @@ bool line_check(){
   
   while(Serial1.available() > 0){
     dir = Serial1.read();
+    Serial.println(dir);
   }
 
   if(dir == 0 | dir == 8){
@@ -176,7 +198,7 @@ bool line_check(){
   }else{
     float esc_theta = map(dir,1,254,-180,180)*PI/180;
     unit_dir = Compass_ctrl.getVector(Adafruit_BNO055::VECTOR_EULER).x()/180*PI;//現在の絶対角度を取得
-    Mom_now = 0;//Cal_dir.Cal_Mom_P(unit_dir);
+    Mom_now = Cal_dir.Cal_Mom_P(unit_dir);
     Mctrl.MOVE(esc_theta,line_power,-Mom_now);
     //delayMicroseconds(100);
     //Serial.println(dir);
