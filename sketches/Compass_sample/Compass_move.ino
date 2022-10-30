@@ -12,7 +12,7 @@
 #include "Line_checker.h"
 #include <Compare_function.h>
 #include <IR_sensor.h>
-#include <moter_control.h>
+#include <motor_control.h>
 #include <moving_average.h>
 #include <Ultrasonic.h>
 
@@ -30,7 +30,7 @@
 
 #define TEMP_NOW 25
 
-#define MOVE moter_move_SPI
+#define MOVE motor_move_SPI
 
 
 //ハードウェア依存
@@ -41,7 +41,7 @@ float theta_M[3] = {0.0,4*PI/3,2*PI/3};//モーターの角度
 
 //インスタンスの生成
 IR_sensor IR_sen(IR_PIN,IR_IN);
-moter_control Mctrl(theta_M);
+motor_control Mctrl(theta_M);
 Adafruit_BNO055 Compass_ctrl = Adafruit_BNO055(-1, 0x28);
 Cal_dir Cal_dir(0);
 Ultrasonic Ultrasonic_a(TEMP_NOW,ECHO_PIN_a,TRIG_PIN_a);

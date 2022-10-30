@@ -1,11 +1,11 @@
 //変えることがないと思われるのでシリアル2を使用している setup で必ずSerial2.begin()を書く
 
-#ifndef Moter_Control_Serial_H
-#define Moter_Control_Serial_H
+#ifndef motor_Control_Serial_H
+#define motor_Control_Serial_H
 
 #include <Compare_function.h>
 
-void moter_Serial_send(int a, int b, int c){
+void motor_Serial_send(int a, int b, int c){
   int val = 0;
   int input[3] = {a, b, c};
   int output[3] = {0, 0, 0};

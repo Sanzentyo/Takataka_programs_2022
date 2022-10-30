@@ -12,7 +12,7 @@
 #include <Line_checker.h>
 #include <Compare_function.h>
 #include <IR_sensor.h>
-#include <moter_control.h>
+#include <motor_control.h>
 #include <moving_average.h>
 #include <Ultrasonic.h>
 
@@ -28,7 +28,7 @@ float theta_M[3] = {0.0,2*PI/3,4*PI/3};//モーターの角度
 
 //インスタンスの生成
 IR_sensor IR_sen(IR_PIN,IR_IN);
-moter_control Mctrl(theta_M);
+motor_control Mctrl(theta_M);
 Adafruit_BNO055 Compass_ctrl = Adafruit_BNO055(-1, 0x28);
 Cal_dir Cal_dir(0);
 Ultrasonic Ultrasonic_back(25,ECHO_PIN,TRIG_PIN);
@@ -62,13 +62,13 @@ void loop() {
     Boal_RT = IR_sen.calcRT();
     Serial.print("theta:");Serial.println(180*Boal_RT.theta/PI);
     Serial.print("radius:");Serial.println(Boal_RT.radius);
-    //Mctrl.moter_move_Serial(Boal_RT.theta,70,Mom_now);
+    //Mctrl.motor_move_Serial(Boal_RT.theta,70,Mom_now);
   }
   delay(500);
   */
   
 
-  //Mctrl.moter_move_Serial(0,70*cos(Boal_RT.theta),Mom_now);//ゴールキーパー　これでいけるはず
+  //Mctrl.motor_move_Serial(0,70*cos(Boal_RT.theta),Mom_now);//ゴールキーパー　これでいけるはず
   
   
   if(flag){
@@ -76,16 +76,16 @@ void loop() {
     Mom_now = Cal_dir.Cal_Mom_PID(euler.x());
     Boal_RT = IR_sen.cal_RT();
     if(Boal_RT.radius > 100){
-      if(-PI <= Boal_RT.theta && Boal_RT.theta <= -7*PI/12)Mctrl.moter_move_Serial(-PI/2,power,Mom_now);
-      else if(-7*PI/12 < Boal_RT.theta && Boal_RT.theta <= -PI/2)Mctrl.moter_move_Serial(0,power,Mom_now);
-      else if(-PI/2 < Boal_RT.theta && Boal_RT.theta <= -5*PI/12)Mctrl.moter_move_Serial(PI,power,Mom_now);
-      else if(-5*PI/12 < Boal_RT.theta && Boal_RT.theta <= 0)Mctrl.moter_move_Serial(-PI/2,power,Mom_now);
-      else if(0 < Boal_RT.theta && Boal_RT.theta <= PI/6)Mctrl.moter_move_Serial(Boal_RT.theta-PI/6,power,Mom_now);
-      else if(PI/6 < Boal_RT.theta && Boal_RT.theta <= 5*PI/6)Mctrl.moter_move_Serial(Boal_RT.theta,power,Mom_now); 
-      else if(5*PI/6 < Boal_RT.theta && Boal_RT.theta <= PI)Mctrl.moter_move_Serial(Boal_RT.theta+PI/6,power,Mom_now);
+      if(-PI <= Boal_RT.theta && Boal_RT.theta <= -7*PI/12)Mctrl.motor_move_Serial(-PI/2,power,Mom_now);
+      else if(-7*PI/12 < Boal_RT.theta && Boal_RT.theta <= -PI/2)Mctrl.motor_move_Serial(0,power,Mom_now);
+      else if(-PI/2 < Boal_RT.theta && Boal_RT.theta <= -5*PI/12)Mctrl.motor_move_Serial(PI,power,Mom_now);
+      else if(-5*PI/12 < Boal_RT.theta && Boal_RT.theta <= 0)Mctrl.motor_move_Serial(-PI/2,power,Mom_now);
+      else if(0 < Boal_RT.theta && Boal_RT.theta <= PI/6)Mctrl.motor_move_Serial(Boal_RT.theta-PI/6,power,Mom_now);
+      else if(PI/6 < Boal_RT.theta && Boal_RT.theta <= 5*PI/6)Mctrl.motor_move_Serial(Boal_RT.theta,power,Mom_now); 
+      else if(5*PI/6 < Boal_RT.theta && Boal_RT.theta <= PI)Mctrl.motor_move_Serial(Boal_RT.theta+PI/6,power,Mom_now);
     }else{
-      if(Ultrasonic_back.measure() > 25)Mctrl.moter_move_Serial(3*PI/2,power,Mom_now);
-      else Mctrl.moter_stop_Serial();
+      if(Ultrasonic_back.measure() > 25)Mctrl.motor_move_Serial(3*PI/2,power,Mom_now);
+      else Mctrl.motor_stop_Serial();
     }
   }
   

@@ -2,18 +2,18 @@
 # Datatypes (KEYWORD1)
 #######################################
 
-moter_control	KEYWORD1
+motor_control	KEYWORD1
 
 #######################################
 # Methods and Functions (KEYWORD2)
 #######################################
 
-moter_move	KEYWORD2
-moter_stop	KEYWORD2
-moter_move_Serial	KEYWORD2
-moter_stop_Serial	KEYWORD2
+motor_move	KEYWORD2
+motor_stop	KEYWORD2
+motor_move_Serial	KEYWORD2
+motor_stop_Serial	KEYWORD2
 
 SPI_setup	KEYWORD2
 set_MAX_POW	KEYWORD2
-moter_move_SPI	KEYWORD2
-moter_stop_SPI	KEYWORD2
+motor_move_SPI	KEYWORD2
+motor_stop_SPI	KEYWORD2

@@ -11,7 +11,7 @@
 #include <Compass_dircal_PID.h>
 #include <Compare_function.h>
 #include <IR_sensor.h>
-#include <moter_control.h>
+#include <motor_control.h>
 #include <moving_average.h>
 #include <Ultrasonic.h>
 #include <Goal_detect.h>
@@ -42,8 +42,8 @@
 
 #define TEMP_NOW 23
 
-#define MOVE moter_move_SPI
-#define STOP moter_stop_SPI
+#define MOVE motor_move_SPI
+#define STOP motor_stop_SPI
 
 //ハードウェア依存
 uint8_t IR_PIN[8] = {A1,A2,A3,A4,A5,A6,A7,A8};//ピンの番号
@@ -56,7 +56,7 @@ int power = 80, line_power = 70;
 //インスタンスの生成
 IR_sensor IR_sen(IR_PIN,IR_IN);
 MovingAverage ma_radius(20);
-moter_control Mctrl(theta_M);
+motor_control Mctrl(theta_M);
 Adafruit_BNO055 Compass_ctrl = Adafruit_BNO055(-1, 0x28);
 Cal_dir Cal_dir(0);
 Ultrasonic Ultrasonic_a(TEMP_NOW,ECHO_PIN_a,TRIG_PIN_a);

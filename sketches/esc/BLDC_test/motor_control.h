@@ -1,5 +1,5 @@
-#ifndef Moter_Control_BLDC_H
-#define Moter_Control_BLDC_H
+#ifndef motor_Control_BLDC_H
+#define motor_Control_BLDC_H
 
 #include <Arduino.h>
 #include <Wire.h>

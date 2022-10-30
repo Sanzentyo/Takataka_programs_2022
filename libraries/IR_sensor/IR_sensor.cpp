@@ -112,7 +112,7 @@ vectorRT_t IR_sensor::cal_RT(){
   this->cal_XY();
 
   //ボールの角度(theta)と距離(radius)を出す　角度は弧度法
-  vector_RT.radius  = sqrt(pow(vector_XY.x, 2.0) + pow(vector_XY.y, 2.0));
+  vector_RT.radius  = sqrt(vector_XY.x*vector_XY.x + vector_XY.y*vector_XY.y);
   vector_RT.theta   = atan2(vector_XY.y, vector_XY.x);//double atan2(double y, double x);
 
   return vector_RT;
@@ -160,13 +160,14 @@ vectorRT_t IR_sensor::cal_RT_cor(){
   this->cal_XY_cor();
 
   //ボールの角度(theta)と距離(radius)を出す　角度は弧度法
-  vector_RT.radius  = sqrt(pow(vector_XY.x, 2.0) + pow(vector_XY.y, 2.0));
+  vector_RT.radius  = sqrt(vector_XY.x*vector_XY.x + vector_XY.y*vector_XY.y);
   vector_RT.theta   = atan2(vector_XY.y, vector_XY.x);//double atan2(double y, double x);
 
   return vector_RT;
 }
 
 //必ずcal_RT()を用いてから実行する
+//ボールとロボットを円と捉え、その接線の方向に進むことで回り込みを行う
 float IR_sensor::cal_close(float now_boal_theta,float now_boal_radius){
   float x,y,x_pre,y_pre;
   x_pre = now_boal_radius*cos(now_boal_theta);

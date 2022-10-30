@@ -1,8 +1,8 @@
 #include <Arduino.h>
 #include <math.h>
 #include <Wire.h>
-#include "moter_control.h"
-#include "moter_control_Serial.h"
+#include "motor_control.h"
+#include "motor_control_Serial.h"
 #include <Compare_function.h>
 #include <SPI.h>
 
@@ -46,7 +46,7 @@ void Send_i2c(char* ads){
 }
 
 
-moter_control::moter_control(float* theta_ads){
+motor_control::motor_control(float* theta_ads){
   
   //予めベクトル計算に用いる固定の三角比を計算させておく 全て定数
   for(int i = 0;i < 3;i++){
@@ -56,7 +56,7 @@ moter_control::moter_control(float* theta_ads){
   }
 }
 
-void moter_control::moter_move(float theta, int V_str, int V_rol){
+void motor_control::motor_move(float theta, int V_str, int V_rol){
   float V_x = V_str*cos(theta);
   float V_y = V_str*sin(theta);
   float M[3];
@@ -81,9 +81,9 @@ void moter_control::moter_move(float theta, int V_str, int V_rol){
   }
   
 
-  Store_i2c(&moter_pow[3],M[0]);//モーターボードの1番の調子が悪いので4番を使っている
-  Store_i2c(&moter_pow[1],M[1]);
-  Store_i2c(&moter_pow[2],M[2]);
+  Store_i2c(&motor_pow[3],M[0]);//モーターボードの1番の調子が悪いので4番を使っている
+  Store_i2c(&motor_pow[1],M[1]);
+  Store_i2c(&motor_pow[2],M[2]);
   /*//デバック用
 
   Serial.println("-------------------------");
@@ -100,19 +100,19 @@ void moter_control::moter_move(float theta, int V_str, int V_rol){
 
   
   Wire.beginTransmission(0x14>>1);
-  Wire.write(moter_pow[0]); // 1ch
-  Wire.write(moter_pow[1]); // 2ch
-  Wire.write(moter_pow[2]); // 3ch
-  Wire.write(moter_pow[3]); // 4ch
-  Wire.write(moter_pow[4]); // 5ch
-  Wire.write(moter_pow[5]); // 6ch
+  Wire.write(motor_pow[0]); // 1ch
+  Wire.write(motor_pow[1]); // 2ch
+  Wire.write(motor_pow[2]); // 3ch
+  Wire.write(motor_pow[3]); // 4ch
+  Wire.write(motor_pow[4]); // 5ch
+  Wire.write(motor_pow[5]); // 6ch
   Wire.endTransmission();
 
   return;
 };
 
 
-void moter_control::moter_stop(){
+void motor_control::motor_stop(){
 
   Wire.beginTransmission(0x14>>1);
   Wire.write(stop_pow[0]); // 1ch
@@ -126,7 +126,7 @@ void moter_control::moter_stop(){
   return;
 }
 
-void moter_control::moter_move_Serial(float theta, int V_str, int V_rol){
+void motor_control::motor_move_Serial(float theta, int V_str, int V_rol){
   float V_x = V_str*cos(theta);
   float V_y = V_str*sin(theta);
   float M[3];
@@ -148,16 +148,16 @@ void moter_control::moter_move_Serial(float theta, int V_str, int V_rol){
     M[i] *= max_per;
   }
 
-  moter_Serial_send(M[0],M[1],M[2]);
+  motor_Serial_send(M[0],M[1],M[2]);
 
   
 }
 
-void moter_control::moter_stop_Serial(){
-  moter_Serial_send(0,0,0);
+void motor_control::motor_stop_Serial(){
+  motor_Serial_send(0,0,0);
 }
 
-void moter_control::SPI_setup(){
+void motor_control::SPI_setup(){
   //SPI通信のためのセットアップ
   SPI.begin();
   
@@ -172,11 +172,11 @@ void moter_control::SPI_setup(){
   
 }
 
-void moter_control::set_MAX_POW(unsigned char max_pow){
+void motor_control::set_MAX_POW(unsigned char max_pow){
   MAX_POW = max_pow;
 }
 
-void moter_control::moter_move_SPI(float theta, int V_str, int V_rol){
+void motor_control::motor_move_SPI(float theta, int V_str, int V_rol){
   float V_x = V_str*cos(theta);
   float V_y = V_str*sin(theta);
   float M[3];
@@ -242,7 +242,7 @@ void moter_control::moter_move_SPI(float theta, int V_str, int V_rol){
   
 }
 
-void moter_control::moter_stop_SPI(){
+void motor_control::motor_stop_SPI(){
   //M0 D5 PE3
   PORTE &= ~0b00001000; // bit3だけLowにする
   SPI.transfer(STOP_DATA);

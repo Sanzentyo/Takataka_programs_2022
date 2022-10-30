@@ -12,7 +12,7 @@
 #include <Line_checker.h>
 #include <Compare_function.h>
 #include <IR_sensor.h>
-#include <moter_control.h>
+#include <motor_control.h>
 #include <moving_average.h>
 #include <Ultrasonic.h>
 #include "Goal_detect.h"
@@ -41,7 +41,7 @@ uint8_t power = 40;
 
 //インスタンスの生成
 IR_sensor IR_sen(IR_PIN,IR_IN);
-moter_control Mctrl(theta_M);
+motor_control Mctrl(theta_M);
 Adafruit_BNO055 Compass_ctrl = Adafruit_BNO055(-1, 0x28);
 Cal_dir Cal_dir(0);
 Ultrasonic Ultrasonic_a(TEMP_NOW,ECHO_PIN_a,TRIG_PIN_a);

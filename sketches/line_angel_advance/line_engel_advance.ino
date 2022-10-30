@@ -81,7 +81,7 @@ void loop() {
       line_y += line_val[i]*unit_sin[i];
     }
 
-    radius = sqrt(pow(line_x, 2.0) + pow(line_y, 2.0));
+    radius = sqrt(line_x*line_x + line_y*line_y);
     now_theta = (byte)(map(atan2(line_y,line_x)*TO_INT,-PI*TO_INT,PI*TO_INT,1,254));
 
     sendIntData(radius);

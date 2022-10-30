@@ -12,7 +12,7 @@
 #include <Line_checker.h>
 #include <Compare_function.h>
 #include <IR_sensor.h>
-#include <moter_control.h>
+#include <motor_control.h>
 #include <moving_average.h>
 #include <Ultrasonic.h>
 
@@ -35,7 +35,7 @@ int power = 100;
 //インスタンスの生成
 IR_sensor IR_sen(IR_PIN,IR_IN);
 MovingAverage ma_radius(20);
-moter_control Mctrl(theta_M);
+motor_control Mctrl(theta_M);
 Adafruit_BNO055 Compass_ctrl = Adafruit_BNO055(-1, 0x28);
 Cal_dir Cal_dir(0);
 Ultrasonic Ultrasonic_back(25,ECHO_PIN,TRIG_PIN);
@@ -68,19 +68,19 @@ void loop() {
     Boal_RT = IR_sen.cal_RT();
     now_radius = ma_radius.updateData(Boal_RT.radius);
     //Serial.println(now_radius);
-    if(now_radius < 100)Mctrl.moter_move(0,0,Mom_now);
-    else if((now_radius < 500) | (PI/6 < Boal_RT.theta && 2*PI/3)|true)Mctrl.moter_move(Boal_RT.theta,power,Mom_now);
+    if(now_radius < 100)Mctrl.motor_move(0,0,Mom_now);
+    else if((now_radius < 500) | (PI/6 < Boal_RT.theta && 2*PI/3)|true)Mctrl.motor_move(Boal_RT.theta,power,Mom_now);
     else if(now_radius < MAX_R*0.9){
       round_theta = IR_sen.cal_close(Boal_RT.theta,now_radius);
-      Mctrl.moter_move(round_theta,power,Mom_now);
-    }else{//Mctrl.moter_move(round_theta,0,Mom_now);
-      if(-PI <= Boal_RT.theta && Boal_RT.theta <= -7*PI/12)Mctrl.moter_move(-PI/2,power,Mom_now);
-      else if(-7*PI/12 < Boal_RT.theta && Boal_RT.theta <= -PI/2)Mctrl.moter_move(0,power,Mom_now);
-      else if(-PI/2 < Boal_RT.theta && Boal_RT.theta <= -5*PI/12)Mctrl.moter_move(PI,power,Mom_now);
-      else if(-5*PI/12 < Boal_RT.theta && Boal_RT.theta <= 0)Mctrl.moter_move(-PI/2,power,Mom_now);
-      else if(0 < Boal_RT.theta && Boal_RT.theta <= PI/6)Mctrl.moter_move(Boal_RT.theta-PI/6,power,Mom_now);
-      else if(PI/6 < Boal_RT.theta && Boal_RT.theta <= 5*PI/6)Mctrl.moter_move(Boal_RT.theta,power,Mom_now); 
-      else if(5*PI/6 < Boal_RT.theta && Boal_RT.theta <= PI)Mctrl.moter_move(Boal_RT.theta+PI/6,power,Mom_now);
+      Mctrl.motor_move(round_theta,power,Mom_now);
+    }else{//Mctrl.motor_move(round_theta,0,Mom_now);
+      if(-PI <= Boal_RT.theta && Boal_RT.theta <= -7*PI/12)Mctrl.motor_move(-PI/2,power,Mom_now);
+      else if(-7*PI/12 < Boal_RT.theta && Boal_RT.theta <= -PI/2)Mctrl.motor_move(0,power,Mom_now);
+      else if(-PI/2 < Boal_RT.theta && Boal_RT.theta <= -5*PI/12)Mctrl.motor_move(PI,power,Mom_now);
+      else if(-5*PI/12 < Boal_RT.theta && Boal_RT.theta <= 0)Mctrl.motor_move(-PI/2,power,Mom_now);
+      else if(0 < Boal_RT.theta && Boal_RT.theta <= PI/6)Mctrl.motor_move(Boal_RT.theta-PI/6,power,Mom_now);
+      else if(PI/6 < Boal_RT.theta && Boal_RT.theta <= 5*PI/6)Mctrl.motor_move(Boal_RT.theta,power,Mom_now); 
+      else if(5*PI/6 < Boal_RT.theta && Boal_RT.theta <= PI)Mctrl.motor_move(Boal_RT.theta+PI/6,power,Mom_now);
     }
   }
 }
