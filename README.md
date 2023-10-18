@@ -1,5 +1,6 @@
 # Takataka_programs_2022 
-高崎高等学校物理部のロボカップジュニアジャパン ライトウェイトのプログラム
+3021-2022年高崎高等学校物理部のロボカップジュニアジャパン ライトウェイトのプログラム  
+ハードウェア部分に関しては、[こちら](https://github.com/negi-tech/RoboCupJunior2021-2022_Lightweight)を参照
 
 ## 開発環境  
 PC  :   [Chromebook 3100 2-in-1 ノートパソコン](https://www.dell.com/ja-jp/shop/デルのノートパソコン/chromebook-3100-2-in-1-ノートパソコン/spd/chromebook-11-3100-2-in-1-laptop)(CPU:Celeron N4020、メモリ:4GB、ストレージ:32GB)  
